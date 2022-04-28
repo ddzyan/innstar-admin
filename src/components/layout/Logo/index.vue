@@ -1,7 +1,7 @@
 <template>
   <div class="logo-container">
-    <!-- <img style="height: 28px" src="/images/logo.png" alt="" /> -->
-    <h1 v-if="!isCollapse">{{ systemTitle }}</h1>
+    <img :style="!isCollapse ? 'height: 50px' : 'width: 200%'" src="/images/logo.png" alt="" />
+    <!-- <h1 v-if="!isCollapse">{{ systemTitle }}</h1> -->
   </div>
 </template>
 
@@ -25,7 +25,7 @@ export default defineComponent({
   height: 60px;
   display: flex;
   align-items: center;
-  /* justify-content: center; */
+  justify-content: center;
   padding: 0 20px;
   box-sizing: border-box;
   width: 100%;

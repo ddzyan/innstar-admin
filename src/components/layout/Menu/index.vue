@@ -51,6 +51,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .el-scrollbar {
   background-color: var(--system-menu-background);
+  height: calc(100% - 60px);
 }
 .layout-menu {
   width: 100%;
@@ -73,6 +74,7 @@ export default defineComponent({
       &.is-active {
         background-color: var(--system-primary-color) !important;
         color: var(--system-primary-text-color) !important;
+        border-right: 2px solid var(--system-primary-text-color);
         i {
           color: var(--system-primary-text-color) !important;
         }

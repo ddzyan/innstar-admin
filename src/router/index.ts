@@ -37,49 +37,49 @@ const routes: Array<RouteRecordRaw> = [
       },
     ],
   },
-  // {
-  //   path: '/pages',
-  //   component: loadView('components/layout/index'),
-  //   redirect: '/pages/crudTable',
-  //   meta: { title: '页面', icon: 'home-line', alwayShow: true },
-  //   children: [
-  //     {
-  //       path: 'crudTable',
-  //       component: loadView('views/home/sss'),
-  //       meta: { title: '业务表格1', cache: false, roles: ['admin', 'editor'] },
-  //     },
-  //     {
-  //       path: 'crudTable2',
-  //       component: loadView('views/home/index'),
-  //       meta: { title: '业务表格2', cache: false, roles: ['admin', 'editor'] },
-  //     },
-  //     {
-  //       path: 'crudTable3',
-  //       component: loadView('views/home/index'),
-  //       meta: { title: '业务表格3', cache: false, roles: ['admin', 'editor'] },
-  //     },
-  //     {
-  //       path: 'crudTable4',
-  //       component: loadView('views/home/index'),
-  //       meta: { title: '业务表格4', cache: false, roles: ['admin', 'editor'] },
-  //     },
-  //     {
-  //       path: 'crudTable5',
-  //       component: loadView('views/home/index'),
-  //       meta: { title: '业务表格5', cache: false, roles: ['admin', 'editor'] },
-  //     },
-  //     {
-  //       path: 'crudTable6',
-  //       component: loadView('views/home/index'),
-  //       meta: { title: '业务表格6', cache: false, roles: ['admin', 'editor'] },
-  //     },
-  //     {
-  //       path: 'crudTable7',
-  //       component: loadView('views/home/index'),
-  //       meta: { title: '业务表格7', cache: false, roles: ['admin', 'editor'] },
-  //     },
-  //   ],
-  // },
+  {
+    path: '/pages',
+    component: loadView('components/layout/index'),
+    redirect: '/pages/crudTable',
+    meta: { title: '页面', icon: 'home-line', alwayShow: true },
+    children: [
+      {
+        path: 'crudTable',
+        component: loadView('views/home/sss'),
+        meta: { title: '业务表格1', cache: false, roles: ['admin', 'editor'] },
+      },
+      {
+        path: 'crudTable2',
+        component: loadView('views/home/index'),
+        meta: { title: '业务表格2', cache: false, roles: ['admin', 'editor'] },
+      },
+      {
+        path: 'crudTable3',
+        component: loadView('views/home/index'),
+        meta: { title: '业务表格3', cache: false, roles: ['admin', 'editor'] },
+      },
+      {
+        path: 'crudTable4',
+        component: loadView('views/home/index'),
+        meta: { title: '业务表格4', cache: false, roles: ['admin', 'editor'] },
+      },
+      {
+        path: 'crudTable5',
+        component: loadView('views/home/index'),
+        meta: { title: '业务表格5', cache: false, roles: ['admin', 'editor'] },
+      },
+      {
+        path: 'crudTable6',
+        component: loadView('views/home/index'),
+        meta: { title: '业务表格6', cache: false, roles: ['admin', 'editor'] },
+      },
+      {
+        path: 'crudTable7',
+        component: loadView('views/home/index'),
+        meta: { title: '业务表格7', cache: false, roles: ['admin', 'editor'] },
+      },
+    ],
+  },
   {
     path: '/login',
     name: 'login',

@@ -5,12 +5,12 @@
       <div class="menu-icon" @click="opendStateChange">
         <remix-icon :size="20" :icon="isCollapse ? 'indent-decrease' : 'indent-increase'"></remix-icon>
       </div>
-      <Breadcrumb />
+      <!-- <Breadcrumb /> -->
     </div>
     <div class="right-box">
       <!-- 快捷功能按钮 -->
       <div class="function-list">
-        <div class="function-list-item hidden-sm-and-down"><Full-screen /></div>
+        <!-- <div class="function-list-item hidden-sm-and-down"><Full-screen /></div> -->
         <!-- <div class="function-list-item"><SizeChange /></div> -->
         <!-- <div class="function-list-item hidden-sm-and-down"><Theme /></div> -->
       </div>
@@ -40,16 +40,16 @@ import RemixIcon from '@/components/remixicon/index.vue'
 import { defineComponent, computed, reactive } from 'vue'
 import { useAppStore, useAdminStore } from '@/store'
 // import { useRouter, useRoute } from 'vue-router'
-import FullScreen from './functionList/fullscreen.vue'
+// import FullScreen from './functionList/fullscreen.vue'
 // import SizeChange from './functionList/sizeChange.vue'
 // import Theme from './functionList/theme.vue'
-import Breadcrumb from './Breadcrumb.vue'
+// import Breadcrumb from './Breadcrumb.vue'
 // import PasswordLayer from './passwordLayer.vue'
 export default defineComponent({
   components: {
     RemixIcon,
-    FullScreen,
-    Breadcrumb,
+    // FullScreen,
+    // Breadcrumb,
     // SizeChange,
     // Theme,
     // PasswordLayer,

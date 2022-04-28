@@ -9,7 +9,7 @@
       <el-header v-show="!contentFullScreen">
         <Header></Header>
       </el-header>
-      <Tabs v-show="showTabs" />
+      <!-- <Tabs v-show="showTabs" /> -->
       <el-main>
         <router-view :key="$route.fullPath" />
         <!-- <router-view v-slot="{ Component, route }">
@@ -30,13 +30,13 @@ import { useEventListener } from '@vueuse/core'
 import Menu from './Menu/index.vue'
 import Logo from './Logo/index.vue'
 import Header from './Header/index.vue'
-import Tabs from './Tabs/index.vue'
+// import Tabs from './Tabs/index.vue'
 export default defineComponent({
   components: {
     Menu,
     Logo,
     Header,
-    Tabs,
+    // Tabs,
   },
   setup() {
     const appStore = useAppStore()
@@ -94,7 +94,7 @@ export default defineComponent({
 .el-main {
   background-color: var(--system-container-background);
   height: 100%;
-  padding: 0;
+  padding: 30px 40px;
 }
 .el-main-box {
   width: 100%;
