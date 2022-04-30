@@ -44,7 +44,7 @@ export const useAdminStore = defineStore({
     async login(params: any) {
       const res = (await demoApi(params)) as any
       const _size = parseInt(String(Math.random() * 500), 10)
-      this.setToken(res.data || '')
+      this.setToken(res?.data || '')
       this.setUserInfo({
         name: params.name,
         avatar: `https://source.unsplash.com/${_size}x${_size}`,

@@ -88,7 +88,7 @@ const routes: Array<RouteRecordRaw> = [
       hideTabs: true,
       hideMenu: true,
     },
-    component: loadView('views/home/sss'),
+    component: loadView('views/login/index'),
   },
   {
     path: '/:catchAll(.*)',

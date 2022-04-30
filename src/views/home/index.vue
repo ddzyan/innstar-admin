@@ -1,10 +1,12 @@
 <template>
   111
   <el-button @click="showContent">console</el-button>
-  <el-button @click="showContent" type="primary">console</el-button>
+  <el-button type="primary" @click="showContent">console</el-button>
+  <el-button type="text"></el-button>
 </template>
 
 <script lang="ts" setup>
+import { onMounted } from 'vue'
 const showContent = () => {
   console.log(11)
 }

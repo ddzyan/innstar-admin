@@ -18,7 +18,7 @@
   // header区域
   --system-header-background: #fff;
   --system-header-text-color: #303133;
-  --system-header-breadcrumb-text-color: #606266;
+  --system-header-breadcrumb-text-color: #000;
   --system-header-item-hover-color: rgba(0, 0, 0, 0.025);
   --system-header-border-color: #d8dce5;
   --system-header-tab-background: #fff;
@@ -34,20 +34,20 @@
   --system-page-border-color: #ebeef5; // 通用的边框配置色，便于主题扩展
 
   // element主题色修改
-  // --el-color-primary: var(--system-primary-color);
+  --el-color-primary: #000;
   // --el-color-success: #67c23a;
   // --el-color-warning: #e6a23c;
   // --el-color-danger: #dc33e7;
   // --el-color-danger: #dc33e7;
-  // --el-color-primary-light-1: rgba(83, 60, 221, 0.9);
-  // --el-color-primary-light-2: rgba(83, 60, 221, 0.8);
-  // --el-color-primary-light-3: rgba(83, 60, 221, 0.7);
-  // --el-color-primary-light-4: rgba(83, 60, 221, 0.6);
-  // --el-color-primary-light-5: rgba(83, 60, 221, 0.5);
-  // --el-color-primary-light-6: rgba(83, 60, 221, 0.4);
-  // --el-color-primary-light-7: rgba(83, 60, 221, 0.3);
-  // --el-color-primary-light-8: rgba(83, 60, 221, 0.2);
-  // --el-color-primary-light-9: rgba(83, 60, 221, 0.1);
+  --el-color-primary-light-1: rgba(0,0,0, 0.9);
+  --el-color-primary-light-2: rgba(0,0,0, 0.8);
+  --el-color-primary-light-3: rgba(0,0,0, 0.7);
+  --el-color-primary-light-4: rgba(0,0,0, 0.6);
+  --el-color-primary-light-5: rgba(0,0,0, 0.5);
+  --el-color-primary-light-6: rgba(0,0,0, 0.4);
+  --el-color-primary-light-7: rgba(0,0,0, 0.3);
+  --el-color-primary-light-8: rgba(0,0,0, 0.2);
+  --el-color-primary-light-9: rgba(0,0,0, 0.1);
   .el-menu--popup {
     --el-menu-hover-bg-color: efefef !important;
     --el-menu-active-color: #000 !important;

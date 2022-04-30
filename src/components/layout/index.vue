@@ -84,7 +84,6 @@ export default defineComponent({
 .el-aside {
   display: flex;
   flex-direction: column;
-  transition: 0.2s;
   overflow-x: hidden;
   transition: 0.3s;
   &::-webkit-scrollbar {

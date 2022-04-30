@@ -1,7 +1,4 @@
 import { defineStore } from 'pinia'
-import elZhCn from 'element-plus/es/locale/lang/zh-cn' // 中文
-import elEn from 'element-plus/es/locale/lang/en' // 英文
-import elKo from 'element-plus/es/locale/lang/ko' // 韩文
 
 interface State {
   lang: 'zh' | 'en' | 'ko'
@@ -26,20 +23,8 @@ export const useAppStore = defineStore({
       expandOneMenu: true, // 一次是否只能展开一个菜单
     }
   },
-  getters: {
-    locale: (state) => {
-      const lang = {
-        en: elEn,
-        zh: elZhCn,
-        ko: elKo,
-      }
-      return lang[state.lang]
-    },
-  },
+  getters: {},
   actions: {
-    changeLang(lang: 'zh' | 'en' | 'ko') {
-      this.lang = lang
-    },
     isCollapseChange(type: boolean) {
       this.isCollapse = type
     },

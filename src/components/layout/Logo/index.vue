@@ -1,6 +1,6 @@
 <template>
   <div class="logo-container">
-    <img :style="!isCollapse ? 'height: 50px' : 'width: 200%'" src="/images/logo.png" alt="" />
+    <img :style="!isCollapse ? 'height: 50px' : 'height: 20px'" src="/images/logo.png" alt="" />
     <!-- <h1 v-if="!isCollapse">{{ systemTitle }}</h1> -->
   </div>
 </template>
