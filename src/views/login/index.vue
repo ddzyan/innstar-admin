@@ -36,6 +36,7 @@ import { reactive, ref } from 'vue'
 import { User, Lock } from '@element-plus/icons-vue'
 import { useAdminStore } from '@/store'
 import { useRouter } from 'vue-router'
+import { demoApi } from '@/api/app/index'
 const router = useRouter()
 const adminStore = useAdminStore()
 const ruleFormRef = ref()
@@ -56,10 +57,15 @@ const submitForm = () => {
   ruleFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       ruleForm.loading = true
-      await adminStore.login({})
-      ruleForm.loading = false
-      router.push('/')
-      console.log('submit!')
+      demoApi({})
+        .then(() => {
+          const _size = parseInt(String(Math.random() * 500), 10)
+          adminStore.setUserInfo({ name: 'admin', avatar: `https://source.unsplash.com/${_size}x${_size}` })
+          router.push('/')
+        })
+        .finally(() => {
+          ruleForm.loading = false
+        })
     } else {
       console.log('error submit!')
       return false

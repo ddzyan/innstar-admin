@@ -103,6 +103,16 @@ export default defineComponent({
             background-color: var(--system-primary-color) !important;
             color: var(--system-primary-text-color) !important;
           }
+          &::before {
+            content: '';
+            left: 25px;
+            top: 50%;
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 2px;
+            background-color: #000;
+          }
         }
         &:hover {
           background-color: var(--system-menu-hover-background) !important;

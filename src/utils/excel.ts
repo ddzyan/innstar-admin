@@ -35,16 +35,6 @@ function json_to_array(key: any[], jsonData: any[]) {
   )
 }
 
-// // fix data,return string
-// function fixdata(data: any) {
-//   let o = ''
-//   let l = 0
-//   const w = 10240
-//   for (; l < data.byteLength / w; ++l) o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)) as any)
-//   o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)) as any)
-//   return o
-// }
-
 // get head from excel file,return array
 function get_header_row(sheet: XLSX.WorkSheet) {
   const headers = []
@@ -59,31 +49,6 @@ function get_header_row(sheet: XLSX.WorkSheet) {
     headers.push(hdr)
   }
   return headers
-}
-
-export const export_table_to_excel = (id: string, filename: string) => {
-  const table = document.getElementById(id)
-  const wb = XLSX.utils.table_to_book(table)
-  XLSX.writeFile(wb, filename)
-
-  /* the second way */
-  // const table = document.getElementById(id);
-  // const wb = XLSX.utils.book_new();
-  // const ws = XLSX.utils.table_to_sheet(table);
-  // XLSX.utils.book_append_sheet(wb, ws, filename);
-  // XLSX.writeFile(wb, filename);
-}
-
-export const export_json_to_excel = ({ data, key, title, filename, autoWidth }: any) => {
-  const wb = XLSX.utils.book_new()
-  data.unshift(title)
-  const ws = XLSX.utils.json_to_sheet(data, { header: key, skipHeader: true })
-  if (autoWidth) {
-    const arr = json_to_array(key, data)
-    auto_width(ws, arr)
-  }
-  XLSX.utils.book_append_sheet(wb, ws, filename)
-  XLSX.writeFile(wb, filename + '.xlsx')
 }
 
 export const export_array_to_excel = (arrs: any[] = [], name = '-') => {
@@ -111,9 +76,6 @@ export const export_array_to_excel = (arrs: any[] = [], name = '-') => {
 }
 
 export const read = (data: any, type: any) => {
-  /* if type == 'base64' must fix data first */
-  // const fixedData = fixdata(data)
-  // const workbook = XLSX.read(btoa(fixedData), { type: 'base64' })
   const workbook = XLSX.read(data, { type: type })
   const firstSheetName = workbook.SheetNames[0]
   const worksheet = workbook.Sheets[firstSheetName]
@@ -123,8 +85,6 @@ export const read = (data: any, type: any) => {
 }
 
 export default {
-  export_table_to_excel,
   export_array_to_excel,
-  export_json_to_excel,
   read,
 }

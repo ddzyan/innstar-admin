@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { demoApi } from '@/api/app/index'
 import router from '@/router'
 
 interface State {
@@ -29,9 +28,7 @@ export const useAdminStore = defineStore({
   actions: {
     setUserInfo(params: State['userInfo']) {
       this.userInfo = params
-    },
-    setToken(params: string) {
-      this.token = params
+      this.token = 'params'
     },
     logout() {
       this.token = ''
@@ -40,15 +37,6 @@ export const useAdminStore = defineStore({
         avatar: '',
       }
       router.replace('/login')
-    },
-    async login(params: any) {
-      const res = (await demoApi(params)) as any
-      const _size = parseInt(String(Math.random() * 500), 10)
-      this.setToken(res?.data || '')
-      this.setUserInfo({
-        name: params.name,
-        avatar: `https://source.unsplash.com/${_size}x${_size}`,
-      })
     },
   },
   persist: {

@@ -38,6 +38,24 @@ const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
+    path: '/baseknowledge',
+    component: loadView('components/layout/index'),
+    redirect: '/baseknowledge/type',
+    meta: { title: '基础知识', icon: 'book-2-fill', alwayShow: true },
+    children: [
+      {
+        path: 'type',
+        component: loadView('views/home/sss'),
+        meta: { title: '知识分类' },
+      },
+      {
+        path: 'list',
+        component: loadView('views/home/sss'),
+        meta: { title: '知识列表' },
+      },
+    ],
+  },
+  {
     path: '/pages',
     component: loadView('components/layout/index'),
     redirect: '/pages/crudTable',
