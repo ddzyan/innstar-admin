@@ -66,6 +66,6 @@ export default defineComponent({
 
 <style>
 .page-box {
-  margin: 10px auto;
+  margin: 30px auto;
 }
 </style>

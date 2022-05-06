@@ -45,12 +45,12 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: 'type',
-        component: loadView('views/home/sss'),
+        component: loadView('views/baseknowledge/type'),
         meta: { title: '知识分类' },
       },
       {
         path: 'list',
-        component: loadView('views/home/sss'),
+        component: loadView('views/baseknowledge/list'),
         meta: { title: '知识列表' },
       },
     ],
