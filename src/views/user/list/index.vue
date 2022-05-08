@@ -2,22 +2,18 @@
   <div class="box">
     <div class="title">
       <div class="t">
-        <div>知识分类</div>
-        <!-- <span>
-          <el-icon><arrow-right-bold /></el-icon>
-          创建知识
-        </span> -->
+        <p>用户列表</p>
       </div>
       <div>
-        <el-button class="plain-btn" @click="$router.push('/baseknowledge/type/edit')">创建分类</el-button>
+        <!-- <el-button class="plain-btn" @click="$router.push('/baseknowledge/list/edit')">创建知识</el-button> -->
       </div>
     </div>
     <div class="my-tables">
       <el-form class="table-top-ruleForm">
-        <el-form-item label="知识名称">
+        <el-form-item label="手机号">
           <el-input v-model="ruleForm.name" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="知识名称">
+        <el-form-item label="昵称">
           <el-input v-model="ruleForm.name" autocomplete="off" />
         </el-form-item>
         <el-form-item>
@@ -35,8 +31,8 @@
         row-class-name="my-table-tr"
       >
         <el-table-column prop="id" label="ID" />
-        <el-table-column prop="id" label="ID" />
-        <el-table-column prop="id" label="ID" />
+        <el-table-column prop="id" label="手机号" />
+        <el-table-column prop="id" label="昵称" />
         <el-table-column prop="id" label="ID" />
         <el-table-column label="xxx">
           <template #default="scope">xxx{{ scope.row.id }}</template>
@@ -137,24 +133,6 @@ onMounted(() => {
       background-color: transparent;
       border-color: #000000;
       color: #000000;
-    }
-    .t {
-      display: flex;
-      line-height: 1;
-      div {
-        cursor: pointer;
-      }
-      span {
-        display: flex;
-        align-items: flex-end;
-        font-size: 24px;
-        font-weight: 500;
-        color: #000000;
-        .el-icon {
-          font-size: 20px;
-          margin: 0 10px;
-        }
-      }
     }
   }
   .my-tables {

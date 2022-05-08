@@ -1,24 +1,10 @@
 <template>
   <div class="connect-item-box">
-    <div class="ctitle">链接课程</div>
+    <div class="ctitle">动作分类</div>
     <div class="flex-items">
       <div>
         <div>
-          <el-select v-model="ruleForm.name" placeholder="请选择器械">
-            <el-option :label="'分类1'" :value="'分类1'" />
-            <el-option :label="'分类2'" :value="'分类2'" />
-            <el-option :label="'分类3'" :value="'分类3'" />
-          </el-select>
-        </div>
-        <div>
-          <el-select v-model="ruleForm.name" placeholder="请选择课程分类">
-            <el-option :label="'分类1'" :value="'分类1'" />
-            <el-option :label="'分类2'" :value="'分类2'" />
-            <el-option :label="'分类3'" :value="'分类3'" />
-          </el-select>
-        </div>
-        <div>
-          <el-select v-model="ruleForm.name" placeholder="请选择课程">
+          <el-select v-model="ruleForm.name" placeholder="所属部位">
             <el-option :label="'分类1'" :value="'分类1'" />
             <el-option :label="'分类2'" :value="'分类2'" />
             <el-option :label="'分类3'" :value="'分类3'" />
@@ -39,10 +25,18 @@
   <div class="connect-item-table my-tables">
     <el-table :data="tableData" style="width: 100%" size="large" header-row-class-name="my-table-header" row-class-name="my-table-tr">
       <el-table-column prop="id" label="ID" />
-      <el-table-column prop="id" label="课程名称" />
+      <el-table-column prop="id" label="所属部位" />
       <el-table-column prop="id" label="排序" />
-      <el-table-column prop="id" label="所属器械" />
-      <el-table-column prop="id" label="所属课程" />
+      <el-table-column prop="id" label="部位图标">
+        <template #default>
+          <el-image
+            style="width: 40px; height: 40px"
+            :src="'https://source.unsplash.com/200x200'"
+            :preview-src-list="['https://source.unsplash.com/200x200']"
+            fit="contain"
+          />
+        </template>
+      </el-table-column>
       <el-table-column label="xxx">
         <template #default="scope">xxx{{ scope.row.id }}</template>
       </el-table-column>

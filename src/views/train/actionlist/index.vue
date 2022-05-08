@@ -2,24 +2,35 @@
   <div class="box">
     <div class="title">
       <div class="t">
-        <div>知识分类</div>
-        <!-- <span>
-          <el-icon><arrow-right-bold /></el-icon>
-          创建知识
-        </span> -->
+        <p>动作列表</p>
       </div>
       <div>
-        <el-button class="plain-btn" @click="$router.push('/baseknowledge/type/edit')">创建分类</el-button>
+        <el-button class="plain-btn" @click="$router.push('/train/actionlist/edit')">创建动作</el-button>
       </div>
     </div>
     <div class="my-tables">
       <el-form class="table-top-ruleForm">
-        <el-form-item label="知识名称">
+        <el-form-item label="动作名称">
           <el-input v-model="ruleForm.name" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="知识名称">
-          <el-input v-model="ruleForm.name" autocomplete="off" />
+        <el-form-item label="所属器械">
+          <el-select v-model="ruleForm.name" placeholder="所属器械">
+            <el-option :label="'分类1'" :value="'分类1'" />
+            <el-option :label="'分类2'" :value="'分类2'" />
+            <el-option :label="'分类3'" :value="'分类3'" />
+          </el-select>
         </el-form-item>
+        <el-form-item label="所属部位">
+          <el-select v-model="ruleForm.name" placeholder="所属部位">
+            <el-option :label="'分类1'" :value="'分类1'" />
+            <el-option :label="'分类2'" :value="'分类2'" />
+            <el-option :label="'分类3'" :value="'分类3'" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="创建时间">
+          <el-date-picker v-model="ruleForm.name" type="datetimerange" range-separator="~" start-placeholder="Start" end-placeholder="End" />
+        </el-form-item>
+
         <el-form-item>
           <el-button type="primary" :icon="Search">搜索</el-button>
         </el-form-item>
@@ -40,6 +51,16 @@
         <el-table-column prop="id" label="ID" />
         <el-table-column label="xxx">
           <template #default="scope">xxx{{ scope.row.id }}</template>
+        </el-table-column>
+        <el-table-column label="xxx">
+          <template #default>
+            <el-image
+              style="width: 100px; height: 100px"
+              :src="'https://source.unsplash.com/200x200'"
+              :preview-src-list="['https://source.unsplash.com/200x200']"
+              fit="contain"
+            />
+          </template>
         </el-table-column>
 
         <el-table-column label="操作">
@@ -137,24 +158,6 @@ onMounted(() => {
       background-color: transparent;
       border-color: #000000;
       color: #000000;
-    }
-    .t {
-      display: flex;
-      line-height: 1;
-      div {
-        cursor: pointer;
-      }
-      span {
-        display: flex;
-        align-items: flex-end;
-        font-size: 24px;
-        font-weight: 500;
-        color: #000000;
-        .el-icon {
-          font-size: 20px;
-          margin: 0 10px;
-        }
-      }
     }
   }
   .my-tables {

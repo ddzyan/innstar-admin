@@ -1,34 +1,16 @@
 <template>
   <div class="connect-item-box">
-    <div class="ctitle">链接课程</div>
+    <div class="ctitle">视频定点</div>
     <div class="flex-items">
       <div>
         <div>
-          <el-select v-model="ruleForm.name" placeholder="请选择器械">
-            <el-option :label="'分类1'" :value="'分类1'" />
-            <el-option :label="'分类2'" :value="'分类2'" />
-            <el-option :label="'分类3'" :value="'分类3'" />
-          </el-select>
+          <el-input v-model="ruleForm.name" type="text" autocomplete="off" placeholder="请输入动作名称" />
         </div>
         <div>
-          <el-select v-model="ruleForm.name" placeholder="请选择课程分类">
-            <el-option :label="'分类1'" :value="'分类1'" />
-            <el-option :label="'分类2'" :value="'分类2'" />
-            <el-option :label="'分类3'" :value="'分类3'" />
-          </el-select>
+          <el-input v-model="ruleForm.name" type="text" autocomplete="off" placeholder="请输入起始时间例如" />
         </div>
         <div>
-          <el-select v-model="ruleForm.name" placeholder="请选择课程">
-            <el-option :label="'分类1'" :value="'分类1'" />
-            <el-option :label="'分类2'" :value="'分类2'" />
-            <el-option :label="'分类3'" :value="'分类3'" />
-          </el-select>
-        </div>
-        <div class="sorder">
-          <div>排序</div>
-          <div>
-            <el-input-number v-model="ruleForm.order" :min="0" controls-position="right" />
-          </div>
+          <el-input v-model="ruleForm.name" type="text" autocomplete="off" placeholder="请输入结束时间例如" />
         </div>
       </div>
       <div>
@@ -39,10 +21,12 @@
   <div class="connect-item-table my-tables">
     <el-table :data="tableData" style="width: 100%" size="large" header-row-class-name="my-table-header" row-class-name="my-table-tr">
       <el-table-column prop="id" label="ID" />
-      <el-table-column prop="id" label="课程名称" />
-      <el-table-column prop="id" label="排序" />
-      <el-table-column prop="id" label="所属器械" />
-      <el-table-column prop="id" label="所属课程" />
+      <el-table-column prop="id" label="动作名称" />
+      <el-table-column prop="id" label="起始时间" />
+      <el-table-column prop="id" label="结束时间" />
+      <el-table-column prop="id" label="总时间">
+        <template #default>xxxx</template>
+      </el-table-column>
       <el-table-column label="xxx">
         <template #default="scope">xxx{{ scope.row.id }}</template>
       </el-table-column>

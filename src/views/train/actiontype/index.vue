@@ -2,29 +2,13 @@
   <div class="box">
     <div class="title">
       <div class="t">
-        <div>知识分类</div>
-        <!-- <span>
-          <el-icon><arrow-right-bold /></el-icon>
-          创建知识
-        </span> -->
+        <p>器械列表</p>
       </div>
       <div>
-        <el-button class="plain-btn" @click="$router.push('/baseknowledge/type/edit')">创建分类</el-button>
+        <el-button class="plain-btn" @click="$router.push('/train/actiontype/edit')">添加器械</el-button>
       </div>
     </div>
     <div class="my-tables">
-      <el-form class="table-top-ruleForm">
-        <el-form-item label="知识名称">
-          <el-input v-model="ruleForm.name" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="知识名称">
-          <el-input v-model="ruleForm.name" autocomplete="off" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :icon="Search">搜索</el-button>
-        </el-form-item>
-      </el-form>
-
       <el-table
         v-loading="loading"
         :data="tableData"
@@ -40,6 +24,16 @@
         <el-table-column prop="id" label="ID" />
         <el-table-column label="xxx">
           <template #default="scope">xxx{{ scope.row.id }}</template>
+        </el-table-column>
+        <el-table-column label="xxx">
+          <template #default>
+            <el-image
+              style="width: 100px; height: 100px"
+              :src="'https://source.unsplash.com/200x200'"
+              :preview-src-list="['https://source.unsplash.com/200x200']"
+              fit="contain"
+            />
+          </template>
         </el-table-column>
 
         <el-table-column label="操作">
@@ -137,24 +131,6 @@ onMounted(() => {
       background-color: transparent;
       border-color: #000000;
       color: #000000;
-    }
-    .t {
-      display: flex;
-      line-height: 1;
-      div {
-        cursor: pointer;
-      }
-      span {
-        display: flex;
-        align-items: flex-end;
-        font-size: 24px;
-        font-weight: 500;
-        color: #000000;
-        .el-icon {
-          font-size: 20px;
-          margin: 0 10px;
-        }
-      }
     }
   }
   .my-tables {
