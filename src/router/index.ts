@@ -45,13 +45,23 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: 'type',
-        component: loadView('views/baseknowledge/type'),
+        component: loadView('views/baseknowledge/type/index'),
         meta: { title: '知识分类' },
       },
       {
+        path: 'type/edit',
+        component: loadView('views/baseknowledge/type/edit'),
+        meta: { title: '知识分类编辑', hideMenu: true },
+      },
+      {
         path: 'list',
-        component: loadView('views/baseknowledge/list'),
+        component: loadView('views/baseknowledge/list/index'),
         meta: { title: '知识列表' },
+      },
+      {
+        path: 'list/edit',
+        component: loadView('views/baseknowledge/list/edit'),
+        meta: { title: '知识编辑', hideMenu: true },
       },
     ],
   },

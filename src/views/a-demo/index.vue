@@ -2,17 +2,29 @@
   <div class="box">
     <div class="title">
       <div class="t">
-        知识列表
-        <span>
+        <p>知识分类</p>
+        <!-- <span>
           <el-icon><arrow-right-bold /></el-icon>
           创建知识
-        </span>
+        </span> -->
       </div>
       <div>
-        <el-button class="plain-btn">创建知识</el-button>
+        <el-button class="plain-btn" @click="$router.push('/baseknowledge/type/edit')">创建分类</el-button>
       </div>
     </div>
     <div class="my-tables">
+      <el-form class="table-top-ruleForm">
+        <el-form-item label="知识名称">
+          <el-input v-model="ruleForm.name" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="知识名称">
+          <el-input v-model="ruleForm.name" autocomplete="off" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" :icon="Search">搜索</el-button>
+        </el-form-item>
+      </el-form>
+
       <el-table
         v-loading="loading"
         :data="tableData"
@@ -64,9 +76,13 @@
 <script lang="ts" setup>
 import { onMounted, ref, reactive } from 'vue'
 import MyPagination from '@/components/base/Pagination.vue'
-import { MoreFilled, Edit, Delete, ArrowRightBold } from '@element-plus/icons-vue'
+import { MoreFilled, Edit, Delete, Search } from '@element-plus/icons-vue'
 
 import { demoApi } from '@/api/app'
+
+const ruleForm = ref({
+  name: '',
+})
 
 const tableData = ref<any>([])
 const loading = ref<any>(false)
@@ -117,21 +133,6 @@ onMounted(() => {
     font-size: 28px;
     font-weight: bold;
     color: #000000;
-    .t {
-      display: flex;
-      line-height: 1;
-      span {
-        display: flex;
-        align-items: flex-end;
-        font-size: 24px;
-        font-weight: 500;
-        color: #000000;
-        .el-icon {
-          font-size: 20px;
-          margin: 0 10px;
-        }
-      }
-    }
     .plain-btn {
       background-color: transparent;
       border-color: #000000;

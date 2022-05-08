@@ -1,9 +1,11 @@
 <template>
   <div class="box">
     <div class="title">
-      <div class="t">知识分类</div>
+      <div class="t">
+        <p>知识列表</p>
+      </div>
       <div>
-        <el-button class="plain-btn">创建分类</el-button>
+        <el-button class="plain-btn" @click="$router.push('/baseknowledge/list/edit')">创建知识</el-button>
       </div>
     </div>
     <div class="my-tables">
@@ -75,7 +77,7 @@ import { MoreFilled, Edit, Delete, Search } from '@element-plus/icons-vue'
 import { demoApi } from '@/api/app'
 
 const ruleForm = ref({
-  name: ''
+  name: '',
 })
 
 const tableData = ref<any>([])
