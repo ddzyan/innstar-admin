@@ -22,7 +22,7 @@
 import { UploadFilled, Refresh } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { ref } from 'vue'
-import { s3UploadFile } from '@/api/app/index'
+import { demoApi } from '@/api/app/index'
 
 const props = defineProps<{
   fileType: 'img' | 'video'
@@ -50,25 +50,37 @@ const onBeforeUploadImage = () => {
 
 const uploadFile = ({ file, onError }: any) => {
   uploadLoading.value = true
-  s3UploadFile({ file })
-    .then((res: any) => {
-      uploadLoading.value = false
-      if (res.errorCode == 21005) {
-        ElMessage.error('文件上传失败')
-        return false
-      } else if (res.errorCode == 21006) {
-        ElMessage.error('配置错误')
-        return false
-      } else {
-        fileUrl.value = res.data.url as string
-        emits('change-file', res.data.url)
-        return res.data.url
-      }
-    })
-    .catch(() => {
-      onError()
-      uploadLoading.value = false
-    })
+  setTimeout(() => {
+    uploadLoading.value = false
+    if (props.fileType == 'video') {
+      fileUrl.value = 'https://storage.360buyimg.com/nutui/video/video_NutUI.mp4'
+      emits('change-file', 'https://storage.360buyimg.com/nutui/video/video_NutUI.mp4')
+    } else {
+      fileUrl.value = 'https://element-plus.org/images/renren.png'
+      emits('change-file', 'https://element-plus.org/images/renren.png')
+    }
+    return ''
+  }, 500)
+
+  // s3UploadFile({ file })
+  //   .then((res: any) => {
+  //     uploadLoading.value = false
+  //     if (res.errorCode == 21005) {
+  //       ElMessage.error('文件上传失败')
+  //       return false
+  //     } else if (res.errorCode == 21006) {
+  //       ElMessage.error('配置错误')
+  //       return false
+  //     } else {
+  //       fileUrl.value = res.data.url as string
+  //       emits('change-file', res.data.url)
+  //       return res.data.url
+  //     }
+  //   })
+  //   .catch(() => {
+  //     onError()
+  //     uploadLoading.value = false
+  //   })
   return ''
 }
 </script>

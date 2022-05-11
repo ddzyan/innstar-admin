@@ -1,7 +1,7 @@
 <template>
   <div class="box">
     <div class="title">
-      <div class="t">{{ true ? '创建' : '编辑' }}知识分类</div>
+      <div class="t">{{ !knowledgeTypeId ? '创建' : '编辑' }}知识分类</div>
       <div>
         <el-button class="plain-btn" @click="$router.push('/baseknowledge/type')">返回</el-button>
       </div>
@@ -25,23 +25,14 @@
 <script lang="ts" setup>
 import { onMounted, ref, reactive } from 'vue'
 
-import { demoApi } from '@/api/app'
+import { postKnowledgeTypeCreate, postKnowledgeTypeEdit, getKnowledgeTypeByid } from '@/api/app'
 import { ElMessage } from 'element-plus'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+const route = useRoute()
 const router = useRouter()
 const ruleFormRef = ref<any>()
+const knowledgeTypeId = ref(0)
 
-// const validatePass = (rule: any, value: any, callback: any) => {
-//   if (value === '') {
-//     callback(new Error('Please input the password'))
-//   } else {
-//     if (ruleForm.checkPass !== '') {
-//       if (!ruleFormRef.value) return
-//       ruleFormRef.value.validateField('checkPass', () => null)
-//     }
-//     callback()
-//   }
-// }
 const loading = ref(false)
 const ruleForm = reactive({
   typename: '',
@@ -49,7 +40,6 @@ const ruleForm = reactive({
 })
 
 const rules = reactive({
-  // typename: [{ validator: validatePass, trigger: 'blur' }],
   typename: [{ required: true, message: '请输入知识分类', trigger: 'blur' }],
 })
 
@@ -58,24 +48,46 @@ const submitForm = (formEl: any) => {
   formEl.validate((valid: boolean) => {
     if (valid) {
       loading.value = true
-      demoApi({})
-        .then(() => {
-          console.log('sss')
-          ElMessage.success('添加成功')
-          router.go(-1)
+      if (knowledgeTypeId.value) {
+        postKnowledgeTypeEdit({
+          knowledgeTypeId: knowledgeTypeId.value,
+          name: ruleForm.typename,
+          rank: Number(ruleForm.order),
         })
-        .finally(() => {
-          loading.value = false
+          .then(() => {
+            ElMessage.success('修改成功')
+            router.go(-1)
+          })
+          .finally(() => {
+            loading.value = false
+          })
+      } else {
+        postKnowledgeTypeCreate({
+          name: ruleForm.typename,
+          rank: Number(ruleForm.order),
         })
+          .then(() => {
+            ElMessage.success('添加成功')
+            router.go(-1)
+          })
+          .finally(() => {
+            loading.value = false
+          })
+      }
     } else {
-      console.log('error submit!')
       return false
     }
   })
 }
 
 onMounted(() => {
-  console.log('mount')
+  if (route.query.id) {
+    knowledgeTypeId.value = Number(route.query.id)
+    getKnowledgeTypeByid({ knowledgeTypeId: route.query.id as string }).then((res) => {
+      ruleForm.typename = res.data.name
+      ruleForm.order = res.data.rank
+    })
+  }
 })
 </script>
 

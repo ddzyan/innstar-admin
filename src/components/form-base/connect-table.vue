@@ -85,7 +85,12 @@ const tableData = ref<any>([])
 
 watch(tableData, (val) => {
   console.log(val)
-  // emits()
+  emits('changeData', [
+    {
+      courseId: 1,
+      rank: 1,
+    },
+  ])
 })
 
 const addTable = () => {

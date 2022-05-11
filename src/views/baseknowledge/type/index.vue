@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="my-tables">
-      <el-form class="table-top-ruleForm">
+      <!-- <el-form class="table-top-ruleForm">
         <el-form-item label="知识名称">
           <el-input v-model="ruleForm.name" autocomplete="off" />
         </el-form-item>
@@ -17,7 +17,7 @@
         <el-form-item>
           <el-button type="primary" :icon="Search">搜索</el-button>
         </el-form-item>
-      </el-form>
+      </el-form> -->
 
       <el-table
         v-loading="loading"
@@ -28,29 +28,28 @@
         header-row-class-name="my-table-header"
         row-class-name="my-table-tr"
       >
-        <el-table-column prop="id" label="ID" />
-        <el-table-column prop="id" label="ID" />
-        <el-table-column prop="id" label="ID" />
-        <el-table-column prop="id" label="ID" />
-        <el-table-column label="xxx">
-          <template #default="scope">xxx{{ scope.row.id }}</template>
+        <el-table-column prop="knowledgeTypeId" label="ID" />
+        <el-table-column prop="name" label="知识分类名称" />
+        <el-table-column prop="rank" label="排序" />
+        <el-table-column label="创建时间">
+          <template #default="scope">{{ timestampToTime(scope.row.createdAt) }}</template>
         </el-table-column>
 
         <el-table-column label="操作">
-          <template #default>
+          <template #default="scope">
             <el-dropdown trigger="click">
               <div style="cursor: pointer">
                 <el-icon><more-filled /></el-icon>
               </div>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item>
+                  <el-dropdown-item @click="$router.push(`/baseknowledge/type/edit?id=${scope.row.knowledgeTypeId}`)">
                     <div class="flex-ac">
                       <el-icon><edit /></el-icon>
                       编辑
                     </div>
                   </el-dropdown-item>
-                  <el-dropdown-item>
+                  <el-dropdown-item @click="delRow(scope.row.knowledgeTypeId)">
                     <div class="flex-ac" style="color: #f24242">
                       <el-icon><delete /></el-icon>
                       删除
@@ -70,13 +69,15 @@
 <script lang="ts" setup>
 import { onMounted, ref, reactive } from 'vue'
 import MyPagination from '@/components/base/Pagination.vue'
-import { MoreFilled, Edit, Delete, Search } from '@element-plus/icons-vue'
+import { MoreFilled, Edit, Delete } from '@element-plus/icons-vue'
+import { timestampToTime } from '@/utils/index'
 
-import { demoApi } from '@/api/app'
+import { getKnowledgeTypeList, postKnowledgeTypeDel } from '@/api/app'
+import { ElMessageBox, ElMessage } from 'element-plus'
 
-const ruleForm = ref({
-  name: '',
-})
+// const ruleForm = ref({
+//   name: '',
+// })
 
 const tableData = ref<any>([])
 const loading = ref<any>(false)
@@ -89,17 +90,10 @@ const pager = reactive<any>({
 const getBList = () => {
   const { currentPage, pageSize } = pager
   loading.value = true
-  demoApi({ limit: pageSize, page: currentPage })
+  getKnowledgeTypeList({ limit: pageSize, page: currentPage })
     .then((res) => {
-      tableData.value = [
-        { id: (currentPage - 1) * pageSize },
-        { id: (currentPage - 1) * pageSize + 1 },
-        { id: (currentPage - 1) * pageSize + 2 },
-        { id: (currentPage - 1) * pageSize + 3 },
-      ]
-      pager.total = 100
-      // pager.total = res.data.count
-      // tableData.value = res.data.rows
+      tableData.value = res.data.rows
+      pager.total = res.data.count
     })
     .finally(() => {
       loading.value = false
@@ -115,6 +109,34 @@ function callFather(parm: any) {
 onMounted(() => {
   getBList()
 })
+
+const delRow = (id: number) => {
+  ElMessageBox.confirm(`确认要删除id为${id}的数据吗？`, 'Warning', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+    beforeClose: (action, instance, done) => {
+      if (action === 'confirm') {
+        instance.confirmButtonLoading = true
+        postKnowledgeTypeDel({ knowledgeTypeId: id })
+          .then(() => {
+            done()
+          })
+          .finally(() => {
+            instance.confirmButtonLoading = false
+          })
+      } else {
+        done()
+      }
+    },
+  }).then(() => {
+    getBList()
+    ElMessage({
+      type: 'success',
+      message: '删除成功',
+    })
+  })
+}
 </script>
 
 <style lang="scss" scoped>
