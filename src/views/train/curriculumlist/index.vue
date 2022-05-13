@@ -24,11 +24,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="创建时间">
-          <el-date-picker v-model="ruleForm.createdAt" type="datetimerange" range-separator="~" start-placeholder="Start" end-placeholder="End" />
+          <el-date-picker v-model="ruleForm.createdAt" type="daterange" range-separator="~" start-placeholder="Start" end-placeholder="End" />
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" :icon="Search">搜索</el-button>
+          <el-button type="primary" :icon="Search" @click="searchFn">搜索</el-button>
         </el-form-item>
       </el-form>
 
@@ -44,10 +44,10 @@
         <el-table-column prop="courseId" label="ID" />
         <el-table-column prop="title" label="课程名称" />
         <el-table-column label="所属器械">
-          <template #default="scope">xxx{{ scope.row.id }}</template>
+          <template #default="scope">{{ scope.row.instrument?.title }}</template>
         </el-table-column>
         <el-table-column label="所属课程">
-          <template #default="scope">xxx{{ scope.row.id }}</template>
+          <template #default="scope">{{ scope.row.courseType?.title }}</template>
         </el-table-column>
         <el-table-column prop="rank" label="排序" />
 
@@ -128,10 +128,10 @@ const getBList = () => {
   if (ruleForm.value.courseTypeId) {
     params.courseTypeId = Number(ruleForm.value.courseTypeId)
   }
-  // if (ruleForm.value.createdAt) {
-  //   params.startAt = ruleForm.value.createdAt[0]
-  //   params.endAt = ruleForm.value.createdAt[1]
-  // }
+  if (ruleForm.value.createdAt) {
+    params.createdAt = ruleForm.value.createdAt[0]
+    params.endAt = ruleForm.value.createdAt[1]
+  }
   getCoursesList(params)
     .then((res) => {
       pager.total = res.data.count
@@ -145,6 +145,11 @@ const getBList = () => {
 function callFather(parm: any) {
   pager.currentPage = parm?.currentPage || 1
   pager.pageSize = parm?.pageSize || 10
+  getBList()
+}
+
+const searchFn = () => {
+  pager.currentPage = 1
   getBList()
 }
 

@@ -12,7 +12,7 @@
         <el-button class="plain-btn" @click="$router.push('/train/curriculumlist')">列表</el-button>
       </div>
     </div>
-    <el-card class="form-box">
+    <el-card v-if="pageLoading" class="form-box">
       <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules" label-width="80px" class="demo-ruleForm">
         <el-form-item label="课程名称" prop="title">
           <el-input v-model="ruleForm.title" type="text" autocomplete="off" />
@@ -211,19 +211,19 @@ onMounted(() => {
   if (route.query.id) {
     courseId.value = Number(route.query.id)
     getCoursesByid({ courseId: route.query.id as string }).then((res) => {
-      // ruleForm.title = res.data.title
-      // ruleForm.instrumentId = res.data.instrumentId
-      // ruleForm.muscleId = res.data.muscleId
-      // ruleForm.rank = res.data.rank
-      // ruleForm.coverUrl = res.data.coverUrl
-      // ruleForm.videoUrl = res.data.video.url
-      // ruleForm.actionContents = (res.data.actionContent || []).map((item: any, k: number) => {
-      //   return {
-      //     ...item,
-      //     key: k,
-      //   }
-      // })
-      // ruleForm.partUrl = res.data.partUrl
+      ruleForm.title = res.data.title
+      ruleForm.coverUrl = res.data.coverUrl
+      ruleForm.videoUrl = res.data.video.url
+      ruleForm.frequency = res.data.frequency
+      ruleForm.describe = res.data.describe
+      ruleForm.level = res.data.level
+      ruleForm.readers = res.data.readers
+      ruleForm.instrumentId = res.data.instrumentId
+      ruleForm.courseTypeId = res.data.courseTypeId
+      ruleForm.rank = res.data.rank
+      // TODO
+      // ruleForm.videoNodes = res.data.videoNodes
+      // ruleForm.courses = res.data.courses
 
       pageLoading.value = true
     })

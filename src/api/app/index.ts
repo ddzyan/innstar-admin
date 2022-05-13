@@ -83,7 +83,7 @@ export const postKnowledgeTypeDel = (params: { knowledgeTypeId: number }) =>
 // ---------基础知识---------
 
 // 获取基础知识列表
-export const getKnowledgeList = (params: ParamsPageLimit & { title?: string; knowledgeTypeId?: number }) =>
+export const getKnowledgeList = (params: ParamsPageLimit & { title?: string; knowledgeTypeId?: number; startAt?: string; endAt?: string }) =>
   axios({
     method: 'get',
     url: `/admin/knowledge`,
@@ -178,7 +178,7 @@ export const postInstrumentsDel = (params: { instrumentId: number }) =>
 export const postInstrumentsEdit = (params: Instruments & { instrumentId: number }) =>
   axios({
     method: 'post',
-    url: `/admin/instruments/xxxxx`,
+    url: `/admin/instruments/update`,
     data: params,
   })
 
@@ -231,6 +231,9 @@ export const getActionsList = (
   params: ParamsPageLimit & {
     instrumentId?: number // 器械id
     muscleId?: number // 器械id
+    title?: string
+    createdAt?: string
+    endAt?: string
   },
 ) =>
   axios({
@@ -333,7 +336,9 @@ export const getCoursesList = (
   params: ParamsPageLimit & {
     instrumentId?: number // 器械id
     title?: string
-    // createdAt?:string
+    createdAt?: string
+    endAt?: string
+    courseTypeId?: number
   },
 ) =>
   axios({

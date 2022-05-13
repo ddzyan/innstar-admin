@@ -42,7 +42,7 @@
           <el-input v-model="ruleForm.readers" type="text" autocomplete="off" />
         </el-form-item>
 
-        <connect-table-vue @change-data="changeCourses" />
+        <connect-table-vue :init-data="ruleForm.initCourses" @change-data="changeCourses" />
 
         <el-form-item style="text-align: right">
           <el-button type="primary" :loading="loading" @click="submitForm(ruleFormRef)">提交</el-button>
@@ -77,6 +77,7 @@ const ruleForm = reactive({
   coverUrl: '',
   videoUrl: '',
   courses: [],
+  initCourses: [],
 })
 
 const rules = reactive({
@@ -163,13 +164,28 @@ onMounted(() => {
       ruleForm.title = res.data.title
       ruleForm.knowledgeTypeId = res.data.knowledgeType.knowledgeTypeId
       ruleForm.rank = res.data.rank
-
-      //  TODO 这些没回显
       ruleForm.describe = res.data.describe
       ruleForm.readers = res.data.readers
       ruleForm.coverUrl = res.data.coverUrl
-      ruleForm.videoUrl = res.data.videoUrl
-      ruleForm.courses = res.data.courses
+
+      //  TODO 这些没回显
+      ruleForm.videoUrl = res.data.video.url
+      ruleForm.courses = (res.data.courses || []).map((item: any) => {
+        return {
+          courseId: item.courseId,
+          rank: item.rank,
+        }
+      })
+
+      ruleForm.initCourses = (res.data.courses || []).map((item: any) => {
+        return {
+          courseId: item.courseId,
+          title: item.title,
+          instrument: item.instrument,
+          courseType: item.courseType,
+          rank: item.rank,
+        }
+      })
 
       pageLoading.value = true
     })

@@ -14,7 +14,8 @@
           </el-select>
         </div>
         <div>
-          <el-select v-model="ruleForm.courseObj" placeholder="请选择课程">
+          <el-select v-if="courses.length == 0" placeholder="请选择课程"></el-select>
+          <el-select v-else v-model="ruleForm1.courseObj" placeholder="请选择课程">
             <el-option v-for="i in courses" :key="i.courseId" :label="i.title" :value="i" />
           </el-select>
         </div>
@@ -36,10 +37,10 @@
       <el-table-column prop="title" label="课程名称" />
       <el-table-column prop="rank" label="排序" />
       <el-table-column label="所属器械">
-        <template #default="scope">xxx{{ scope.row.id }}</template>
+        <template #default="scope">{{ scope.row.instrument?.title }}</template>
       </el-table-column>
       <el-table-column label="所属课程">
-        <template #default="scope">xxx{{ scope.row.id }}</template>
+        <template #default="scope">{{ scope.row.courseType?.title }}</template>
       </el-table-column>
 
       <el-table-column label="操作">
@@ -74,15 +75,19 @@ import { getInstrumentsList, getCourseTypeList, getCoursesList } from '@/api/app
 const instruments = ref<any>([])
 const courseType = ref<any>([])
 const courses = ref<any>([])
+const props = defineProps<{ initData: any }>()
 const emits = defineEmits(['changeData'])
 const ruleForm = reactive<any>({
   instrumentId: '',
   courseTypeId: '',
   rank: 1,
+})
+
+const ruleForm1 = reactive<any>({
   courseObj: {},
 })
 
-const tableData = ref<any>([])
+const tableData = ref<any>(props.initData || [])
 
 watch(tableData.value, (val) => {
   emits(
@@ -106,22 +111,26 @@ const getCoursesList1 = () => {
     limit: '99',
     page: '1',
     instrumentId: Number(ruleForm.instrumentId),
-    // courseTypeId: Number(ruleForm.courseTypeId)
+    courseTypeId: Number(ruleForm.courseTypeId),
   }).then((res) => {
+    if (res.data.data.length > 0) {
+      ruleForm1.courseObj = res.data.data[0]
+    }
     courses.value = res.data.data
   })
 }
 
 const addTable = () => {
-  if (ruleForm.courseObj?.courseId) {
+  if (ruleForm1.courseObj?.courseId) {
     tableData.value.push({
-      ...ruleForm.courseObj,
+      ...ruleForm1.courseObj,
       rank: Number(ruleForm.rank),
     })
     ruleForm.instrumentId = ''
     ruleForm.courseTypeId = ''
-    ruleForm.courseObj = {}
+    ruleForm1.courseObj = {}
     ruleForm.rank = 1
+    courses.value = []
   } else {
     ElMessage.error('请选择课程')
   }

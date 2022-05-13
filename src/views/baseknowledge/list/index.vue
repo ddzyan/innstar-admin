@@ -19,7 +19,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="创建时间">
-          <el-date-picker v-model="ruleForm.createdAt" type="datetimerange" range-separator="~" start-placeholder="Start" end-placeholder="End" />
+          <el-date-picker v-model="ruleForm.createdAt" type="daterange" range-separator="~" start-placeholder="Start" end-placeholder="End" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" :icon="Search" @click="searchFn">搜索</el-button>
@@ -115,10 +115,10 @@ const getBList = () => {
   if (ruleForm.value.knowledgeTypeId) {
     params.knowledgeTypeId = Number(ruleForm.value.knowledgeTypeId)
   }
-  // if (ruleForm.value.createdAt) {
-  //   params.startAt = ruleForm.value.createdAt[0]
-  //   params.endAt = ruleForm.value.createdAt[1]
-  // }
+  if (ruleForm.value.createdAt) {
+    params.startAt = ruleForm.value.createdAt[0]
+    params.endAt = ruleForm.value.createdAt[1]
+  }
   getKnowledgeList(params)
     .then((res) => {
       tableData.value = res.data.data

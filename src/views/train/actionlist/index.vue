@@ -24,11 +24,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="创建时间">
-          <el-date-picker v-model="ruleForm.createdAt" type="datetimerange" range-separator="~" start-placeholder="Start" end-placeholder="End" />
+          <el-date-picker v-model="ruleForm.createdAt" type="daterange" range-separator="~" start-placeholder="Start" end-placeholder="End" />
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" :icon="Search">搜索</el-button>
+          <el-button type="primary" :icon="Search" @click="searchFn">搜索</el-button>
         </el-form-item>
       </el-form>
 
@@ -127,10 +127,10 @@ const getBList = () => {
   if (ruleForm.value.muscleId) {
     params.muscleId = Number(ruleForm.value.muscleId)
   }
-  // if (ruleForm.value.createdAt) {
-  //   params.startAt = ruleForm.value.createdAt[0]
-  //   params.endAt = ruleForm.value.createdAt[1]
-  // }
+  if (ruleForm.value.createdAt) {
+    params.createdAt = ruleForm.value.createdAt[0]
+    params.endAt = ruleForm.value.createdAt[1]
+  }
   getActionsList(params)
     .then((res) => {
       pager.total = res.data.count
@@ -140,7 +140,10 @@ const getBList = () => {
       loading.value = false
     })
 }
-
+const searchFn = () => {
+  pager.currentPage = 1
+  getBList()
+}
 function callFather(parm: any) {
   pager.currentPage = parm?.currentPage || 1
   pager.pageSize = parm?.pageSize || 10

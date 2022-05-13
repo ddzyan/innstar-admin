@@ -158,7 +158,11 @@ onMounted(() => {
       ruleForm.readers = res.data.instrument.readers
       ruleForm.coverUrl = res.data.instrument.coverUrl
       ruleForm.videoUrl = res.data.instrument.video.url
-      // ruleForm.courses = res.data.courses
+      // ruleForm.courses = (res.data.courses || []).map(item=>{
+      //   return {
+      //     item.
+      //   }
+      // })
 
       pageLoading.value = true
     })

@@ -85,8 +85,8 @@ watch(tableData.value, (val) => {
     val.map((i: any) => {
       return {
         title: String(i.title),
-        startAt: Number(i.startAt),
-        endAt: Number(i.endAt),
+        startAt: String(i.startAt),
+        endAt: String(i.endAt),
       }
     }),
   )
