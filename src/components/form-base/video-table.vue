@@ -45,7 +45,7 @@
               <el-dropdown-menu>
                 <el-dropdown-item @click="movePosition(scope.row, 1)">
                   <div class="flex-ac">
-                    <el-icon><top /></el-icon>
+                    <el-icon><icon-top /></el-icon>
                     上移
                   </div>
                 </el-dropdown-item>
@@ -72,7 +72,7 @@
 
 <script lang="ts" setup>
 import { ref, watch, reactive } from 'vue'
-import { MoreFilled, Delete, Bottom, Top } from '@element-plus/icons-vue'
+import { MoreFilled, Delete, Bottom, Top as IconTop } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 const props = defineProps<{ initData: any }>()
 

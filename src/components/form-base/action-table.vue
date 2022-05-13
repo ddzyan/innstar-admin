@@ -68,8 +68,8 @@
 import { onMounted, ref, watch, reactive } from 'vue'
 import { MoreFilled, Delete } from '@element-plus/icons-vue'
 
-import { demoApi } from '@/api/app'
-const emits = defineEmits(['changeData'])
+// import { demoApi } from '@/api/app'
+// const emits = defineEmits(['changeData'])
 const ruleForm = reactive({
   name: '',
   order: 0,
