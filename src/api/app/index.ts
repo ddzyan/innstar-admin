@@ -19,12 +19,12 @@ export const demoApi = async (params: any) => {
   })
 }
 
-// export const postAdminLogin = (params: ParamsPostAdminLogin) =>
-//   axios({
-//     method: 'post',
-//     url: `/admin/login`,
-//     data: params,
-//   })
+export const postAdminLogin = (params: { account: string; pwd: string }) =>
+  axios({
+    method: 'post',
+    url: `/admin/login`,
+    data: params,
+  })
 
 // export const getUserList = (params: ParamsGetUserList) =>
 //   axios({

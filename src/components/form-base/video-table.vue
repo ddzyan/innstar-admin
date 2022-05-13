@@ -7,10 +7,10 @@
           <el-input v-model="ruleForm.title" type="text" autocomplete="off" placeholder="请输入动作名称" />
         </div>
         <div>
-          <el-input v-model="ruleForm.startAt" type="text" autocomplete="off" placeholder="请输入起始时间(秒数)" />
+          <el-input v-model="ruleForm.startAt" type="text" autocomplete="off" placeholder="请输入起始秒数" />
         </div>
         <div>
-          <el-input v-model="ruleForm.endAt" type="text" autocomplete="off" placeholder="请输入结束时间(秒数)" />
+          <el-input v-model="ruleForm.endAt" type="text" autocomplete="off" placeholder="请输入结束秒数" />
         </div>
       </div>
       <div>
@@ -24,8 +24,13 @@
         <template #default="scope">{{ scope.$index + 1 }}</template>
       </el-table-column>
       <el-table-column prop="title" label="动作名称" />
-      <el-table-column prop="startAt" label="起始时间" />
-      <el-table-column prop="endAt" label="结束时间" />
+      <el-table-column prop="startAt" label="起始时间">
+        <template #default="scope">{{ formatTime(scope.row.startAt) }}</template>
+      </el-table-column>
+
+      <el-table-column prop="endAt" label="结束时间">
+        <template #default="scope">{{ formatTime(scope.row.endAt) }}</template>
+      </el-table-column>
       <el-table-column label="总时间">
         <template #default="scope">{{ Number(scope.row.endAt) - Number(scope.row.startAt) }}</template>
       </el-table-column>
@@ -69,6 +74,7 @@
 import { ref, watch, reactive } from 'vue'
 import { MoreFilled, Delete, Bottom, Top } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+const props = defineProps<{ initData: any }>()
 
 const emits = defineEmits(['changeData'])
 const ruleForm = reactive({
@@ -77,7 +83,7 @@ const ruleForm = reactive({
   endAt: '',
 })
 
-const tableData = ref<any>([])
+const tableData = ref<any>(props.initData || [])
 
 watch(tableData.value, (val) => {
   emits(
@@ -137,6 +143,14 @@ const movePosition = (item: any, type: 1 | 2) => {
     }
     swapItem(tableData.value, index, index + 1)
   }
+}
+const formatTime = (n: any) => {
+  const a = [parseInt(String(n / 60 / 60), 10) % 10000, parseInt(String(n / 60), 10) % 60, n % 60]
+  return a
+    .map((i) => {
+      return ('00' + String(i)).substring(String(i).length, String(i).length + 2)
+    })
+    .join(':')
 }
 </script>
 

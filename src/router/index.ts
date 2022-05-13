@@ -15,28 +15,29 @@ const loadView = (view: string) => () => {
  * @params alwayShow: 只有一个子路由时是否总是展示菜单，默认false
  */
 const routes: Array<RouteRecordRaw> = [
-  // {
-  //   path: '/',
-  //   redirect: '/home',
-  // },
+  {
+    path: '/',
+    redirect: '/baseknowledge/type',
+    meta: { hideMenu: true },
+  },
   // {
   //   path: '/home',
   //   name: 'home',
   //   component: loadView('views/home/index'),
   // },
-  {
-    path: '/',
-    component: loadView('components/layout/index'),
-    redirect: '/home',
-    meta: { title: 'home', icon: 'home-line' },
-    children: [
-      {
-        path: 'home',
-        component: loadView('views/home/index'),
-        meta: { title: '首页', icon: 'home-line', hideClose: true },
-      },
-    ],
-  },
+  // {
+  //   path: '/',
+  //   component: loadView('components/layout/index'),
+  //   redirect: '/home',
+  //   meta: { title: 'home', icon: 'home-line' },
+  //   children: [
+  //     {
+  //       path: 'home',
+  //       component: loadView('views/home/index'),
+  //       meta: { title: '首页', icon: 'home-line', hideClose: true },
+  //     },
+  //   ],
+  // },
   {
     path: '/baseknowledge',
     component: loadView('components/layout/index'),
@@ -160,16 +161,16 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  // if (to.path !== '/login') {
-  //   const adminStore = useAdminStore()
-  //   if (adminStore.token) {
-  //     next()
-  //   } else {
-  //     next('/login')
-  //   }
-  // } else {
-  //   next()
-  // }
+  if (to.path !== '/login') {
+    const adminStore = useAdminStore()
+    if (adminStore.token) {
+      next()
+    } else {
+      next('/login')
+    }
+  } else {
+    next()
+  }
   next()
 })
 

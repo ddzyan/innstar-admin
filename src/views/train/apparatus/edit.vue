@@ -44,7 +44,7 @@
         </el-form-item>
 
         <!-- <action-table-vue /> -->
-        <connect-table-vue @change-data="changeCourses" />
+        <connect-table-vue :init-data="ruleForm.initCourses" @change-data="changeCourses" />
 
         <el-form-item style="text-align: right">
           <el-button type="primary" :loading="loading" @click="submitForm(ruleFormRef)">提交</el-button>
@@ -78,6 +78,7 @@ const ruleForm = reactive({
   coverUrl: '',
   videoUrl: '',
   courses: [],
+  initCourses: [],
 })
 
 const rules = reactive({
@@ -158,11 +159,22 @@ onMounted(() => {
       ruleForm.readers = res.data.instrument.readers
       ruleForm.coverUrl = res.data.instrument.coverUrl
       ruleForm.videoUrl = res.data.instrument.video.url
-      // ruleForm.courses = (res.data.courses || []).map(item=>{
-      //   return {
-      //     item.
-      //   }
-      // })
+      ruleForm.courses = (res.data.course || []).map((item: any) => {
+        return {
+          courseId: item.courseId,
+          rank: item.rank,
+        }
+      })
+
+      ruleForm.initCourses = (res.data.course || []).map((item: any) => {
+        return {
+          courseId: item.courseId,
+          title: item.title,
+          instrument: item.instrument,
+          courseType: item.courseType,
+          rank: item.rank,
+        }
+      })
 
       pageLoading.value = true
     })

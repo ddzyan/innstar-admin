@@ -4,7 +4,11 @@ import router from '@/router'
 interface State {
   token: string
   userInfo: {
-    name: string
+    account: string
+    adminId: number
+    headUrl: string
+    tel: string
+    token: string
     avatar: string
   }
 }
@@ -15,7 +19,11 @@ export const useAdminStore = defineStore({
     return {
       token: '',
       userInfo: {
-        name: '',
+        account: '',
+        adminId: 0,
+        headUrl: '',
+        tel: '',
+        token: '',
         avatar: '',
       },
     }
@@ -28,12 +36,16 @@ export const useAdminStore = defineStore({
   actions: {
     setUserInfo(params: State['userInfo']) {
       this.userInfo = params
-      this.token = 'params'
+      this.token = params.token
     },
     logout() {
       this.token = ''
       this.userInfo = {
-        name: '',
+        account: '',
+        adminId: 0,
+        headUrl: '',
+        tel: '',
+        token: '',
         avatar: '',
       }
       router.replace('/login')

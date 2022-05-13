@@ -42,7 +42,6 @@ service.interceptors.response.use(
       if (status == 401) {
         ElMessage.error(`登录超时，重新登录`)
         useAdminStore().logout()
-        // router.push('/login')
       } else {
         ElMessage.error(data.msg)
       }

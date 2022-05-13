@@ -10,8 +10,8 @@
       <div>
         <div class="title">账号密码登录</div>
         <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules" size="large">
-          <el-form-item prop="username">
-            <el-input v-model="ruleForm.username" type="text" autocomplete="off" placeholder="用户名" :prefix-icon="User" />
+          <el-form-item prop="account">
+            <el-input v-model="ruleForm.account" type="text" autocomplete="off" placeholder="用户名" :prefix-icon="User" />
           </el-form-item>
           <el-form-item prop="pwd">
             <el-input v-model="ruleForm.pwd" type="password" autocomplete="off" placeholder="密码" :prefix-icon="Lock" />
@@ -32,24 +32,24 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { User, Lock } from '@element-plus/icons-vue'
 import { useAdminStore } from '@/store'
 import { useRouter } from 'vue-router'
-import { demoApi } from '@/api/app/index'
+import { postAdminLogin } from '@/api/app/index'
 const router = useRouter()
 const adminStore = useAdminStore()
 const ruleFormRef = ref()
 
 const ruleForm = reactive({
-  username: '',
+  account: '',
   pwd: '',
   isSave: [],
   loading: false,
 })
 
 const rules = reactive({
-  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  account: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
   pwd: [{ required: true, message: '请输入密码', trigger: 'blur' }],
 })
 
@@ -57,10 +57,20 @@ const submitForm = () => {
   ruleFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       ruleForm.loading = true
-      demoApi({})
-        .then(() => {
+      postAdminLogin({
+        account: ruleForm.account,
+        pwd: ruleForm.pwd,
+      })
+        .then((res) => {
           const _size = parseInt(String(Math.random() * 500), 10)
-          adminStore.setUserInfo({ name: 'admin', avatar: `https://source.unsplash.com/${_size}x${_size}` })
+          adminStore.setUserInfo({ ...res.data, avatar: `https://source.unsplash.com/${_size}x${_size}` })
+          if (ruleForm.isSave.length > 0) {
+            localStorage.setItem('user-a', ruleForm.account)
+            localStorage.setItem('user-p', ruleForm.pwd)
+          } else {
+            localStorage.removeItem('user-a')
+            localStorage.removeItem('user-p')
+          }
           router.push('/')
         })
         .finally(() => {
@@ -72,6 +82,13 @@ const submitForm = () => {
     }
   })
 }
+onMounted(() => {
+  ruleForm.account = String(localStorage.getItem('user-a') || '')
+  ruleForm.pwd = String(localStorage.getItem('user-p') || '')
+  if (ruleForm.account) {
+    ruleForm.isSave = ['记住我'] as any
+  }
+})
 </script>
 
 <style lang="scss" scoped>

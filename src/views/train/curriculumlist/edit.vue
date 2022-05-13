@@ -63,8 +63,8 @@
           </div>
         </div>
 
-        <video-table-vue @change-data="changeVideoNodes" />
-        <connect-table-vue @change-data="changeCourses" />
+        <video-table-vue :init-data="ruleForm.videoNodes" @change-data="changeVideoNodes" />
+        <connect-table-vue :init-data="ruleForm.initCourses" @change-data="changeCourses" />
 
         <el-form-item style="text-align: right">
           <el-button type="primary" :loading="loading" @click="submitForm(ruleFormRef)">提交</el-button>
@@ -105,6 +105,7 @@ const ruleForm = reactive({
   videoNodes: [],
   courses: [],
   rank: 1,
+  initCourses: [],
 })
 
 const rules = reactive({
@@ -211,19 +212,33 @@ onMounted(() => {
   if (route.query.id) {
     courseId.value = Number(route.query.id)
     getCoursesByid({ courseId: route.query.id as string }).then((res) => {
-      ruleForm.title = res.data.title
-      ruleForm.coverUrl = res.data.coverUrl
-      ruleForm.videoUrl = res.data.video.url
-      ruleForm.frequency = res.data.frequency
-      ruleForm.describe = res.data.describe
-      ruleForm.level = res.data.level
-      ruleForm.readers = res.data.readers
-      ruleForm.instrumentId = res.data.instrumentId
-      ruleForm.courseTypeId = res.data.courseTypeId
-      ruleForm.rank = res.data.rank
-      // TODO
-      // ruleForm.videoNodes = res.data.videoNodes
-      // ruleForm.courses = res.data.courses
+      ruleForm.title = res.data.course.title
+      ruleForm.coverUrl = res.data.course.coverUrl
+      ruleForm.videoUrl = res.data.course.video.url
+      ruleForm.frequency = res.data.course.frequency
+      ruleForm.describe = res.data.course.describe
+      ruleForm.level = res.data.course.level
+      ruleForm.readers = res.data.course.readers
+      ruleForm.instrumentId = res.data.course.instrumentId
+      ruleForm.courseTypeId = res.data.course.courseTypeId
+      ruleForm.rank = res.data.course.rank
+      ruleForm.videoNodes = res.data.course?.video?.videoNodes
+      ruleForm.courses = (res.data.courses || []).map((item: any) => {
+        return {
+          courseId: item.courseId,
+          rank: item.rank,
+        }
+      })
+
+      ruleForm.initCourses = (res.data.courses || []).map((item: any) => {
+        return {
+          courseId: item.courseId,
+          title: item.title,
+          instrument: item.instrument,
+          courseType: item.courseType,
+          rank: item.rank,
+        }
+      })
 
       pageLoading.value = true
     })
