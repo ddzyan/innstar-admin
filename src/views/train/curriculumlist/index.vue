@@ -11,24 +11,20 @@
     <div class="my-tables">
       <el-form class="table-top-ruleForm">
         <el-form-item label="课程名称">
-          <el-input v-model="ruleForm.name" autocomplete="off" />
+          <el-input v-model="ruleForm.title" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="所属器械">
-          <el-select v-model="ruleForm.name" placeholder="所属器械">
-            <el-option :label="'分类1'" :value="'分类1'" />
-            <el-option :label="'分类2'" :value="'分类2'" />
-            <el-option :label="'分类3'" :value="'分类3'" />
+        <el-form-item label="所属器械" prop="instrumentId">
+          <el-select v-model="ruleForm.instrumentId" placeholder="所属器械">
+            <el-option v-for="i in instruments" :key="i.instrumentId" :label="i.title" :value="i.instrumentId" />
           </el-select>
         </el-form-item>
-        <el-form-item label="所属部位">
-          <el-select v-model="ruleForm.name" placeholder="所属部位">
-            <el-option :label="'分类1'" :value="'分类1'" />
-            <el-option :label="'分类2'" :value="'分类2'" />
-            <el-option :label="'分类3'" :value="'分类3'" />
+        <el-form-item label="所属课程" prop="courseTypeId">
+          <el-select v-model="ruleForm.courseTypeId" placeholder="所属课程">
+            <el-option v-for="i in courseType" :key="i.courseTypeId" :label="i.title" :value="i.courseTypeId" />
           </el-select>
         </el-form-item>
         <el-form-item label="创建时间">
-          <el-date-picker v-model="ruleForm.name" type="datetimerange" range-separator="~" start-placeholder="Start" end-placeholder="End" />
+          <el-date-picker v-model="ruleForm.createdAt" type="datetimerange" range-separator="~" start-placeholder="Start" end-placeholder="End" />
         </el-form-item>
 
         <el-form-item>
@@ -45,39 +41,35 @@
         header-row-class-name="my-table-header"
         row-class-name="my-table-tr"
       >
-        <el-table-column prop="id" label="ID" />
-        <el-table-column prop="id" label="ID" />
-        <el-table-column prop="id" label="ID" />
-        <el-table-column prop="id" label="ID" />
-        <el-table-column label="xxx">
+        <el-table-column prop="courseId" label="ID" />
+        <el-table-column prop="title" label="课程名称" />
+        <el-table-column label="所属器械">
           <template #default="scope">xxx{{ scope.row.id }}</template>
         </el-table-column>
-        <el-table-column label="xxx">
-          <template #default>
-            <el-image
-              style="width: 100px; height: 100px"
-              :src="'https://source.unsplash.com/200x200'"
-              :preview-src-list="['https://source.unsplash.com/200x200']"
-              fit="contain"
-            />
-          </template>
+        <el-table-column label="所属课程">
+          <template #default="scope">xxx{{ scope.row.id }}</template>
+        </el-table-column>
+        <el-table-column prop="rank" label="排序" />
+
+        <el-table-column label="创建时间" :min-width="'120'">
+          <template #default="scope">{{ timestampToTime(scope.row.createdAt) }}</template>
         </el-table-column>
 
         <el-table-column label="操作">
-          <template #default>
+          <template #default="scope">
             <el-dropdown trigger="click">
               <div style="cursor: pointer">
                 <el-icon><more-filled /></el-icon>
               </div>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item>
+                  <el-dropdown-item @click="$router.push(`/train/curriculumlist/edit?id=${scope.row.courseId}`)">
                     <div class="flex-ac">
                       <el-icon><edit /></el-icon>
                       编辑
                     </div>
                   </el-dropdown-item>
-                  <el-dropdown-item>
+                  <el-dropdown-item @click="delRow(scope.row.courseId)">
                     <div class="flex-ac" style="color: #f24242">
                       <el-icon><delete /></el-icon>
                       删除
@@ -98,11 +90,18 @@
 import { onMounted, ref, reactive } from 'vue'
 import MyPagination from '@/components/base/Pagination.vue'
 import { MoreFilled, Edit, Delete, Search } from '@element-plus/icons-vue'
+import { timestampToTime } from '@/utils/index'
+import { ElMessageBox, ElMessage } from 'element-plus'
 
-import { demoApi } from '@/api/app'
+import { getCoursesList, postCoursesDel, getInstrumentsList, getCourseTypeList } from '@/api/app'
 
+const instruments = ref<any>([])
+const courseType = ref<any>([])
 const ruleForm = ref({
-  name: '',
+  title: '',
+  instrumentId: '',
+  courseTypeId: '',
+  createdAt: '',
 })
 
 const tableData = ref<any>([])
@@ -116,17 +115,27 @@ const pager = reactive<any>({
 const getBList = () => {
   const { currentPage, pageSize } = pager
   loading.value = true
-  demoApi({ limit: pageSize, page: currentPage })
+  const params: any = {
+    limit: pageSize,
+    page: currentPage,
+  }
+  if (ruleForm.value.title) {
+    params.title = ruleForm.value.title
+  }
+  if (ruleForm.value.instrumentId) {
+    params.instrumentId = Number(ruleForm.value.instrumentId)
+  }
+  if (ruleForm.value.courseTypeId) {
+    params.courseTypeId = Number(ruleForm.value.courseTypeId)
+  }
+  // if (ruleForm.value.createdAt) {
+  //   params.startAt = ruleForm.value.createdAt[0]
+  //   params.endAt = ruleForm.value.createdAt[1]
+  // }
+  getCoursesList(params)
     .then((res) => {
-      tableData.value = [
-        { id: (currentPage - 1) * pageSize },
-        { id: (currentPage - 1) * pageSize + 1 },
-        { id: (currentPage - 1) * pageSize + 2 },
-        { id: (currentPage - 1) * pageSize + 3 },
-      ]
-      pager.total = 100
-      // pager.total = res.data.count
-      // tableData.value = res.data.rows
+      pager.total = res.data.count
+      tableData.value = res.data.data
     })
     .finally(() => {
       loading.value = false
@@ -141,7 +150,48 @@ function callFather(parm: any) {
 
 onMounted(() => {
   getBList()
+  getInstrumentsList({ limit: '99', page: '1' })
+    .then((res) => {
+      instruments.value = res.data.data
+    })
+    .finally(() => {
+      loading.value = false
+    })
+  getCourseTypeList({ limit: '99', page: '1' })
+    .then((res) => {
+      courseType.value = res.data.rows
+    })
+    .finally(() => {
+      loading.value = false
+    })
 })
+const delRow = (id: number) => {
+  ElMessageBox.confirm(`确认要删除id为${id}的数据吗？`, 'Warning', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+    beforeClose: (action, instance, done) => {
+      if (action === 'confirm') {
+        instance.confirmButtonLoading = true
+        postCoursesDel({ courseId: id })
+          .then(() => {
+            done()
+          })
+          .finally(() => {
+            instance.confirmButtonLoading = false
+          })
+      } else {
+        done()
+      }
+    },
+  }).then(() => {
+    getBList()
+    ElMessage({
+      type: 'success',
+      message: '删除成功',
+    })
+  })
+}
 </script>
 
 <style lang="scss" scoped>

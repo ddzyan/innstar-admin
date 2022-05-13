@@ -70,7 +70,7 @@
             >
               <el-input v-model="domain.describe" type="textarea" autocomplete="off" rows="4" />
             </el-form-item>
-            <div class="icon-remove-box" @click="removeItemsForm">
+            <div class="icon-remove-box" @click="removeItemsForm(domain)">
               <el-icon><remove-filled /></el-icon>
             </div>
           </div>

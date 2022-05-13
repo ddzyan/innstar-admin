@@ -322,6 +322,74 @@ export const postCourseTypeEdit = (params: { title: string; rank: number; course
 export const postCourseTypeDel = (params: { courseTypeId: number }) =>
   axios({
     method: 'post',
-    url: `/admin/courseType/destory`,
+    url: `/admin/courseType/destroy`,
+    data: params,
+  })
+
+// -------课程------
+
+// 获取课程列表
+export const getCoursesList = (
+  params: ParamsPageLimit & {
+    instrumentId?: number // 器械id
+    title?: string
+    // createdAt?:string
+  },
+) =>
+  axios({
+    method: 'get',
+    url: `/admin/courses`,
+    params: params,
+  })
+// 获取指定课程
+export const getCoursesByid = (params: { courseId: string }) =>
+  axios({
+    method: 'get',
+    url: `/admin/courses/${params.courseId}`,
+    // params: params,
+  })
+
+// 创建课程
+interface Courses {
+  title: string
+  coverUrl: string
+  videoUrl: string
+  frequency: string
+  describe: string
+  level: string
+  readers: number
+  instrumentId: number // 所属器械
+  courseTypeId: number // 所属课程
+  videoNodes: {
+    title: string
+    startAt: string
+    endAt: string
+  }[]
+  courses: {
+    courseId: number
+    rank: number
+  }[]
+  rank: number
+}
+export const postCoursesCreate = (params: Courses) =>
+  axios({
+    method: 'post',
+    url: `/admin/courses/create`,
+    data: params,
+  })
+
+// 修改课程
+export const postCoursesEdit = (params: Courses & { courseId: number }) =>
+  axios({
+    method: 'post',
+    url: `/admin/courses/update`,
+    data: params,
+  })
+
+// 删除课程
+export const postCoursesDel = (params: { courseId: number }) =>
+  axios({
+    method: 'post',
+    url: `/admin/courses/destroy`,
     data: params,
   })

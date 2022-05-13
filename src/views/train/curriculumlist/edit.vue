@@ -5,7 +5,7 @@
         <div>课程列表</div>
         <span>
           <el-icon><arrow-right-bold /></el-icon>
-          {{ true ? '创建' : '编辑' }}课程
+          {{ !courseId ? '创建' : '编辑' }}课程
         </span>
       </div>
       <div>
@@ -14,37 +14,57 @@
     </div>
     <el-card class="form-box">
       <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules" label-width="80px" class="demo-ruleForm">
-        <el-form-item label="器械名称" prop="name">
-          <el-input v-model="ruleForm.name" type="text" autocomplete="off" />
+        <el-form-item label="课程名称" prop="title">
+          <el-input v-model="ruleForm.title" type="text" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="器械排序" prop="order">
-          <el-input-number v-model="ruleForm.order" :min="0" controls-position="right" />
+        <el-form-item label="所属器械" prop="instrumentId">
+          <el-select v-model="ruleForm.instrumentId" placeholder="所属器械">
+            <el-option v-for="i in instruments" :key="i.instrumentId" :label="i.title" :value="i.instrumentId" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所属课程" prop="courseTypeId">
+          <el-select v-model="ruleForm.courseTypeId" placeholder="所属课程">
+            <el-option v-for="i in courseType" :key="i.courseTypeId" :label="i.title" :value="i.courseTypeId" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="课程等级" prop="level">
+          <el-input v-model="ruleForm.level" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="练习频次" prop="frequency">
+          <el-input v-model="ruleForm.frequency" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="浏览人数" prop="readers">
+          <el-input v-model="ruleForm.readers" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="课程排序" prop="rank">
+          <el-input-number v-model="ruleForm.rank" :min="1" controls-position="right" />
+        </el-form-item>
+
+        <el-form-item label="课程简介" prop="describe">
+          <el-input v-model="ruleForm.describe" type="textarea" autocomplete="off" rows="6" placeholder="请输入课程简介" />
         </el-form-item>
 
         <div class="form-upload-item-div">
           <div>
-            <div>上传封面</div>
+            <div>课程封面</div>
             <div>
-              <my-upload-vue file-type="img" />
+              <my-upload-vue :init-file="ruleForm.coverUrl" file-type="img" @change-file="changeCoverUrl" />
             </div>
           </div>
           <div>
-            <div>上传视频</div>
+            <div>课程视频</div>
             <div>
-              <my-upload-vue file-type="video" />
+              <my-upload-vue :init-file="ruleForm.videoUrl" file-type="video" @change-file="changeVideoUrl" />
             </div>
           </div>
         </div>
 
-        <el-form-item label="浏览人数" prop="name">
-          <el-input v-model="ruleForm.name" type="text" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="计划简介" prop="name">
-          <el-input v-model="ruleForm.name" type="textarea" autocomplete="off" rows="6" placeholder="请输入知识简介" />
-        </el-form-item>
-
-        <video-table-vue />
-        <connect-table-vue />
+        <video-table-vue @change-data="changeVideoNodes" />
+        <connect-table-vue @change-data="changeCourses" />
 
         <el-form-item style="text-align: right">
           <el-button type="primary" :loading="loading" @click="submitForm(ruleFormRef)">提交</el-button>
@@ -60,48 +80,111 @@ import MyUploadVue from '@/components/base/myUpload.vue'
 import connectTableVue from '@/components/form-base/connect-table.vue'
 import videoTableVue from '@/components/form-base/video-table.vue'
 import { ArrowRightBold } from '@element-plus/icons-vue'
-import { demoApi } from '@/api/app'
+import { getCoursesByid, postCoursesCreate, postCoursesEdit, getInstrumentsList, getCourseTypeList } from '@/api/app'
 import { ElMessage } from 'element-plus'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+const route = useRoute()
 const router = useRouter()
 const ruleFormRef = ref<any>()
+const courseId = ref()
+const pageLoading = ref(false)
+const instruments = ref<any>([])
+const courseType = ref<any>([])
 
-// const validatePass = (rule: any, value: any, callback: any) => {
-//   if (value === '') {
-//     callback(new Error('Please input the password'))
-//   } else {
-//     if (ruleForm.checkPass !== '') {
-//       if (!ruleFormRef.value) return
-//       ruleFormRef.value.validateField('checkPass', () => null)
-//     }
-//     callback()
-//   }
-// }
 const loading = ref(false)
 const ruleForm = reactive({
-  name: '',
-  order: 0,
+  title: '',
+  coverUrl: '',
+  videoUrl: '',
+  frequency: '',
+  describe: '',
+  level: '',
+  readers: '',
+  instrumentId: '', // 所属器械
+  courseTypeId: '', // 所属课程
+  videoNodes: [],
+  courses: [],
+  rank: 1,
 })
 
 const rules = reactive({
-  // name: [{ validator: validatePass, trigger: 'blur' }],
-  name: [{ required: true, message: '请输入知识分类', trigger: 'blur' }],
+  title: [{ required: true, message: '请输入课程名称', trigger: 'blur' }],
+  instrumentId: [{ required: true, message: '请选择所属器械', trigger: 'blur' }],
+  courseTypeId: [{ required: true, message: '请选择所属课程', trigger: 'blur' }],
+  level: [{ required: true, message: '请输入课程等级', trigger: 'blur' }],
+  frequency: [{ required: true, message: '请输入练习频次', trigger: 'blur' }],
+  readers: [{ required: true, message: '请输入浏览人数', trigger: 'blur' }],
+  describe: [{ required: true, message: '请输入课程简介', trigger: 'blur' }],
 })
+
+const changeCoverUrl = (val: string) => {
+  ruleForm.coverUrl = val
+}
+const changeVideoUrl = (val: string) => {
+  ruleForm.videoUrl = val
+}
+const changeVideoNodes = (val: any) => {
+  ruleForm.videoNodes = val
+}
+const changeCourses = (val: any) => {
+  ruleForm.courses = val
+}
 
 const submitForm = (formEl: any) => {
   if (!formEl) return
   formEl.validate((valid: boolean) => {
     if (valid) {
+      if (!ruleForm.coverUrl) {
+        ElMessage.error('请上传封面')
+        return
+      }
+      if (!ruleForm.videoUrl) {
+        ElMessage.error('请上传视频')
+        return
+      }
+      if (ruleForm.courses.length < 1) {
+        ElMessage.error('请选择链接课程')
+        return
+      }
+      if (ruleForm.videoNodes.length < 1) {
+        ElMessage.error('请输入视频定点')
+        return
+      }
+
       loading.value = true
-      demoApi({})
-        .then(() => {
-          console.log('sss')
-          ElMessage.success('添加成功')
-          router.go(-1)
-        })
-        .finally(() => {
-          loading.value = false
-        })
+      const params = {
+        title: ruleForm.title,
+        rank: Number(ruleForm.rank),
+        coverUrl: ruleForm.coverUrl,
+        videoUrl: ruleForm.videoUrl,
+        frequency: ruleForm.frequency,
+        describe: ruleForm.describe,
+        level: ruleForm.level,
+        readers: Number(ruleForm.readers),
+        courseTypeId: Number(ruleForm.courseTypeId),
+        instrumentId: Number(ruleForm.instrumentId),
+        videoNodes: ruleForm.videoNodes,
+        courses: ruleForm.courses,
+      }
+      if (courseId.value) {
+        postCoursesEdit({ ...params, courseId: Number(courseId.value) })
+          .then(() => {
+            ElMessage.success('修改成功')
+            router.go(-1)
+          })
+          .finally(() => {
+            loading.value = false
+          })
+      } else {
+        postCoursesCreate(params)
+          .then(() => {
+            ElMessage.success('添加成功')
+            router.go(-1)
+          })
+          .finally(() => {
+            loading.value = false
+          })
+      }
     } else {
       console.log('error submit!')
       return false
@@ -110,7 +193,43 @@ const submitForm = (formEl: any) => {
 }
 
 onMounted(() => {
-  console.log('mount')
+  getInstrumentsList({ limit: '99', page: '1' })
+    .then((res) => {
+      instruments.value = res.data.data
+    })
+    .finally(() => {
+      loading.value = false
+    })
+  getCourseTypeList({ limit: '99', page: '1' })
+    .then((res) => {
+      courseType.value = res.data.rows
+    })
+    .finally(() => {
+      loading.value = false
+    })
+
+  if (route.query.id) {
+    courseId.value = Number(route.query.id)
+    getCoursesByid({ courseId: route.query.id as string }).then((res) => {
+      // ruleForm.title = res.data.title
+      // ruleForm.instrumentId = res.data.instrumentId
+      // ruleForm.muscleId = res.data.muscleId
+      // ruleForm.rank = res.data.rank
+      // ruleForm.coverUrl = res.data.coverUrl
+      // ruleForm.videoUrl = res.data.video.url
+      // ruleForm.actionContents = (res.data.actionContent || []).map((item: any, k: number) => {
+      //   return {
+      //     ...item,
+      //     key: k,
+      //   }
+      // })
+      // ruleForm.partUrl = res.data.partUrl
+
+      pageLoading.value = true
+    })
+  } else {
+    pageLoading.value = true
+  }
 })
 </script>
 

@@ -17,7 +17,7 @@
         </div>
       </template>
     </el-upload>
-    <div class="error" v-if="false">
+    <div v-if="false" class="error">
       <div class="btn-box">
         <div>上传出了点问题</div>
         <div>
