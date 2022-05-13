@@ -367,8 +367,8 @@ interface Courses {
   courseTypeId: number // 所属课程
   videoNodes: {
     title: string
-    startAt: string
-    endAt: string
+    startAt: number
+    endAt: number
   }[]
   courses: {
     courseId: number
