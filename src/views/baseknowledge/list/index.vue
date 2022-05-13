@@ -9,17 +9,22 @@
       </div>
     </div>
     <div class="my-tables">
-      <!-- <el-form class="table-top-ruleForm">
+      <el-form class="table-top-ruleForm">
         <el-form-item label="知识名称">
-          <el-input v-model="ruleForm.name" autocomplete="off" />
+          <el-input v-model="ruleForm.title" autocomplete="off" />
         </el-form-item>
         <el-form-item label="知识分类">
-          <el-input v-model="ruleForm.name" autocomplete="off" />
+          <el-select v-model="ruleForm.knowledgeTypeId" placeholder="请选择知识分类">
+            <el-option v-for="i in knowledgeType" :key="i.knowledgeTypeId" :label="i.name" :value="i.knowledgeTypeId" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="创建时间">
+          <el-date-picker v-model="ruleForm.createdAt" type="datetimerange" range-separator="~" start-placeholder="Start" end-placeholder="End" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :icon="Search">搜索</el-button>
+          <el-button type="primary" :icon="Search" @click="searchFn">搜索</el-button>
         </el-form-item>
-      </el-form> -->
+      </el-form>
 
       <el-table
         v-loading="loading"
@@ -79,10 +84,13 @@ import { MoreFilled, Edit, Delete, Search } from '@element-plus/icons-vue'
 import { timestampToTime } from '@/utils/index'
 
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { getKnowledgeList, postKnowledgeDel } from '@/api/app'
+import { getKnowledgeList, postKnowledgeDel, getKnowledgeTypeList } from '@/api/app'
 
+const knowledgeType = ref<any>([])
 const ruleForm = ref({
-  name: '',
+  title: '',
+  knowledgeTypeId: '',
+  createdAt: '',
 })
 
 const tableData = ref<any>([])
@@ -96,7 +104,22 @@ const pager = reactive<any>({
 const getBList = () => {
   const { currentPage, pageSize } = pager
   loading.value = true
-  getKnowledgeList({ limit: pageSize, page: currentPage })
+
+  const params: any = {
+    limit: pageSize,
+    page: currentPage,
+  }
+  if (ruleForm.value.title) {
+    params.title = ruleForm.value.title
+  }
+  if (ruleForm.value.knowledgeTypeId) {
+    params.knowledgeTypeId = Number(ruleForm.value.knowledgeTypeId)
+  }
+  // if (ruleForm.value.createdAt) {
+  //   params.startAt = ruleForm.value.createdAt[0]
+  //   params.endAt = ruleForm.value.createdAt[1]
+  // }
+  getKnowledgeList(params)
     .then((res) => {
       tableData.value = res.data.data
       pager.total = res.data.count
@@ -104,6 +127,11 @@ const getBList = () => {
     .finally(() => {
       loading.value = false
     })
+}
+
+const searchFn = () => {
+  pager.currentPage = 1
+  getBList()
 }
 
 function callFather(parm: any) {
@@ -114,6 +142,9 @@ function callFather(parm: any) {
 
 onMounted(() => {
   getBList()
+  getKnowledgeTypeList({ limit: '99', page: '1' }).then((res) => {
+    knowledgeType.value = res.data.rows
+  })
 })
 
 const delRow = (id: number) => {

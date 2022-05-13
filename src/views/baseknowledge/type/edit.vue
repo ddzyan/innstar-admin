@@ -12,7 +12,7 @@
           <el-input v-model="ruleForm.typename" type="text" autocomplete="off" />
         </el-form-item>
         <el-form-item label="分类排序" prop="order">
-          <el-input-number v-model="ruleForm.order" :min="0" controls-position="right" />
+          <el-input-number v-model="ruleForm.order" :min="1" controls-position="right" />
         </el-form-item>
         <el-form-item style="text-align: right">
           <el-button type="primary" :loading="loading" @click="submitForm(ruleFormRef)">提交</el-button>
@@ -36,7 +36,7 @@ const knowledgeTypeId = ref(0)
 const loading = ref(false)
 const ruleForm = reactive({
   typename: '',
-  order: 0,
+  order: 1,
 })
 
 const rules = reactive({

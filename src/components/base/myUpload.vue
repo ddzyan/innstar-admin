@@ -1,28 +1,46 @@
 <template>
-  <el-upload v-loading="uploadLoading" class="upload-box" action="#" :before-upload="onBeforeUploadImage" :http-request="uploadFile" :show-file-list="false">
-    <template v-if="fileUrl == ''">
-      <el-icon class="upload-icon"><upload-filled /></el-icon>
-      <div class="upload-text">{{ props.fileType == 'video' ? '添加视频' : '添加图片' }}</div>
-    </template>
-    <template v-else>
-      <div class="preview">
-        <video v-if="props.fileType == 'video'" :src="fileUrl" alt="" srcset="" />
-        <img v-else :src="fileUrl" alt="" srcset="" />
-        <div class="change-box">
+  <div class="upload">
+    <el-upload v-loading="uploadLoading" class="upload-box" action="#" :before-upload="onBeforeUploadImage" :http-request="uploadFile" :show-file-list="false">
+      <template v-if="fileUrl == ''">
+        <el-icon class="upload-icon"><upload-filled /></el-icon>
+        <div class="upload-text">{{ props.fileType == 'video' ? '添加视频' : '添加图片' }}</div>
+      </template>
+      <template v-else>
+        <div class="preview">
+          <video v-if="props.fileType == 'video'" :src="fileUrl" alt="" srcset="" />
+          <img v-else :src="fileUrl" alt="" srcset="" />
+          <div class="change-box">
+            <div>
+              <el-icon class="refresh-icon"><refresh /></el-icon>
+            </div>
+          </div>
+        </div>
+      </template>
+    </el-upload>
+    <div class="error" v-if="false">
+      <div class="btn-box">
+        <div>上传出了点问题</div>
+        <div>
           <div>
-            <el-icon class="refresh-icon"><refresh /></el-icon>
+            <el-icon class="refresh-icon"><upload /></el-icon>
+            <div>继续上传</div>
+          </div>
+          <div>
+            <el-icon class="refresh-icon"><close /></el-icon>
+            <div>取消上传</div>
           </div>
         </div>
       </div>
-    </template>
-  </el-upload>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { UploadFilled, Refresh } from '@element-plus/icons-vue'
+import OSS from 'ali-oss'
+import { UploadFilled, Refresh, Upload, Close } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { ref } from 'vue'
-import { demoApi } from '@/api/app/index'
+import { onMounted, ref } from 'vue'
+import { getOssCredentials } from '@/api/app/index'
 
 const props = defineProps<{
   fileType: 'img' | 'video'
@@ -62,6 +80,35 @@ const uploadFile = ({ file, onError }: any) => {
     return ''
   }, 500)
 
+  const ObjName = 'test.png'
+
+  // const url = client.value.signatureUrl(ObjName)
+  // console.log(url)
+
+  // client.value
+  //   .multipartUpload(ObjName, file, {
+  //     // progress: (p, cpt, res) => {
+  //     //   console.log(p, cpt, res)
+  //     //   // 为中断点赋值。
+  //     //   aabortCheckpoint.value = cpt
+  //     //   console.log(cpt, 'abortCheckpoint')
+  //     //   // 获取上传进度。
+  //     // },
+  //   })
+  //   .then((r) => console.log(r, 'error'))
+
+  // client.value
+  //   .put(ObjName, file)
+  //   .then((e) => {
+  //     console.log(e, '----')
+  //     fileUrl.value = e.url as string
+  //     uploadLoading.value = false
+  //     // client.putACL(ObjName, 'public-read')
+  //   })
+  //   .catch((x) => {
+  //     console.log(x, '=-=-=-=')
+  //   })
+
   // s3UploadFile({ file })
   //   .then((res: any) => {
   //     uploadLoading.value = false
@@ -83,9 +130,60 @@ const uploadFile = ({ file, onError }: any) => {
   //   })
   return ''
 }
+
+const afile = ref()
+const aabortCheckpoint = ref()
+const client = ref()
+onMounted(() => {
+  getOssCredentials().then((res) => {
+    client.value = new OSS({
+      region: res.data.region,
+      accessKeyId: res.data.accessKeyId,
+      accessKeySecret: res.data.accessKeySecret,
+      bucket: res.data.bucket,
+      stsToken: res.data.stsToken,
+    })
+    // stsToken  expiration
+  })
+})
 </script>
 
 <style lang="scss" scoped>
+.upload {
+  position: relative;
+  .error {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #cecece;
+    .btn-box {
+      width: 100%;
+      & > div {
+        font-size: 14px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+      }
+      & > div:nth-of-type(2) {
+        margin-top: 25px;
+        & > div {
+          width: 50%;
+        }
+        .el-icon {
+          font-size: 25px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
 .upload-box {
   height: 180px;
   width: 180px;

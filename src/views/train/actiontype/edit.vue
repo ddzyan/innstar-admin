@@ -5,33 +5,33 @@
         <div>动作分类</div>
         <span>
           <el-icon><arrow-right-bold /></el-icon>
-          {{ true ? '创建' : '编辑' }}分类
+          {{ !muscleId ? '创建' : '编辑' }}分类
         </span>
       </div>
       <div>
         <el-button class="plain-btn" @click="$router.push('/train/actiontype')">返回</el-button>
       </div>
     </div>
-    <el-card class="form-box">
+    <el-card v-if="pageLoading" class="form-box">
       <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules" label-width="80px" class="demo-ruleForm">
-        <el-form-item label="分类名称" prop="name">
-          <el-input v-model="ruleForm.name" type="text" autocomplete="off" />
+        <el-form-item label="分类名称" prop="title">
+          <el-input v-model="ruleForm.title" type="text" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="分类排序" prop="order">
-          <el-input-number v-model="ruleForm.order" :min="0" controls-position="right" />
+        <el-form-item label="分类排序" prop="rank">
+          <el-input-number v-model="ruleForm.rank" :min="1" controls-position="right" />
         </el-form-item>
 
         <div class="form-upload-item-div">
           <div>
             <div>上传封面</div>
             <div>
-              <my-upload-vue file-type="img" />
+              <my-upload-vue :init-file="ruleForm.coverUrl" file-type="img" @change-file="changeCoverUrl" />
             </div>
           </div>
           <div>
             <div>上传视频</div>
             <div>
-              <my-upload-vue file-type="video" />
+              <my-upload-vue :init-file="ruleForm.videoUrl" file-type="video" @change-file="changeVideoUrl" />
             </div>
           </div>
         </div>
@@ -48,11 +48,14 @@
 import { onMounted, ref, reactive } from 'vue'
 import MyUploadVue from '@/components/base/myUpload.vue'
 import { ArrowRightBold } from '@element-plus/icons-vue'
-import { demoApi } from '@/api/app'
+import { getMusclesTypeByid, postMusclesTypeCreate, postMusclesTypeEdit } from '@/api/app'
 import { ElMessage } from 'element-plus'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+const route = useRoute()
 const router = useRouter()
 const ruleFormRef = ref<any>()
+const muscleId = ref()
+const pageLoading = ref(false)
 
 // const validatePass = (rule: any, value: any, callback: any) => {
 //   if (value === '') {
@@ -67,29 +70,63 @@ const ruleFormRef = ref<any>()
 // }
 const loading = ref(false)
 const ruleForm = reactive({
-  name: '',
-  order: 0,
+  title: '',
+  rank: 1,
+  coverUrl: '',
+  videoUrl: '',
 })
 
 const rules = reactive({
   // name: [{ validator: validatePass, trigger: 'blur' }],
-  name: [{ required: true, message: '请输入知识分类', trigger: 'blur' }],
+  name: [{ required: true, message: '请输入动作分类', trigger: 'blur' }],
 })
+
+const changeCoverUrl = (val: string) => {
+  ruleForm.coverUrl = val
+}
+const changeVideoUrl = (val: string) => {
+  ruleForm.videoUrl = val
+}
 
 const submitForm = (formEl: any) => {
   if (!formEl) return
   formEl.validate((valid: boolean) => {
     if (valid) {
+      if (!ruleForm.coverUrl) {
+        ElMessage.error('请上传封面')
+        return
+      }
+      if (!ruleForm.videoUrl) {
+        ElMessage.error('请上传视频')
+        return
+      }
       loading.value = true
-      demoApi({})
-        .then(() => {
-          console.log('sss')
-          ElMessage.success('添加成功')
-          router.go(-1)
-        })
-        .finally(() => {
-          loading.value = false
-        })
+
+      const params = {
+        title: ruleForm.title,
+        rank: Number(ruleForm.rank),
+        coverUrl: ruleForm.coverUrl,
+        videoUrl: ruleForm.videoUrl,
+      }
+      if (muscleId.value) {
+        postMusclesTypeEdit({ ...params, muscleId: Number(muscleId.value) })
+          .then(() => {
+            ElMessage.success('修改成功')
+            router.go(-1)
+          })
+          .finally(() => {
+            loading.value = false
+          })
+      } else {
+        postMusclesTypeCreate(params)
+          .then(() => {
+            ElMessage.success('添加成功')
+            router.go(-1)
+          })
+          .finally(() => {
+            loading.value = false
+          })
+      }
     } else {
       console.log('error submit!')
       return false
@@ -98,7 +135,19 @@ const submitForm = (formEl: any) => {
 }
 
 onMounted(() => {
-  console.log('mount')
+  if (route.query.id) {
+    muscleId.value = Number(route.query.id)
+    getMusclesTypeByid({ muscleId: route.query.id as string }).then((res) => {
+      ruleForm.title = res.data.title
+      ruleForm.rank = res.data.rank
+      ruleForm.coverUrl = res.data.coverUrl
+      ruleForm.videoUrl = res.data.video.url
+
+      pageLoading.value = true
+    })
+  } else {
+    pageLoading.value = true
+  }
 })
 </script>
 

@@ -44,7 +44,7 @@ service.interceptors.response.use(
         useAdminStore().logout()
         // router.push('/login')
       } else {
-        ElMessage.error(data.message)
+        ElMessage.error(data.msg)
       }
     } else if (error.message.includes('timeout')) {
       ElMessage.error('网络超时，请稍后刷新页面')

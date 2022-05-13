@@ -5,56 +5,52 @@
         <div>动作列表</div>
         <span>
           <el-icon><arrow-right-bold /></el-icon>
-          {{ true ? '创建' : '编辑' }}动作
+          {{ !actionId ? '创建' : '编辑' }}动作
         </span>
       </div>
       <div>
         <el-button class="plain-btn" @click="$router.push('/train/actionlist')">返回</el-button>
       </div>
     </div>
-    <el-card class="form-box">
+    <el-card v-if="pageLoading" class="form-box">
       <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules" label-width="80px" class="demo-ruleForm">
-        <el-form-item label="分类名称" prop="name">
-          <el-input v-model="ruleForm.name" type="text" autocomplete="off" />
+        <el-form-item label="分类名称" prop="title">
+          <el-input v-model="ruleForm.title" type="text" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="所属器械" prop="order">
-          <el-select v-model="ruleForm.name" placeholder="所属器械">
-            <el-option :label="'分类1'" :value="'分类1'" />
-            <el-option :label="'分类2'" :value="'分类2'" />
-            <el-option :label="'分类3'" :value="'分类3'" />
+        <el-form-item label="所属器械" prop="instrumentId">
+          <el-select v-model="ruleForm.instrumentId" placeholder="所属器械">
+            <el-option v-for="i in instruments" :key="i.instrumentId" :label="i.title" :value="i.instrumentId" />
           </el-select>
         </el-form-item>
-        <el-form-item label="所属部位" prop="order">
-          <el-select v-model="ruleForm.name" placeholder="所属部位">
-            <el-option :label="'分类1'" :value="'分类1'" />
-            <el-option :label="'分类2'" :value="'分类2'" />
-            <el-option :label="'分类3'" :value="'分类3'" />
+        <el-form-item label="所属部位" prop="muscleId">
+          <el-select v-model="ruleForm.muscleId" placeholder="所属部位">
+            <el-option v-for="i in musclesType" :key="i.muscleId" :label="i.title" :value="i.muscleId" />
           </el-select>
         </el-form-item>
-        <el-form-item label="器械排序" prop="order">
-          <el-input-number v-model="ruleForm.order" :min="0" controls-position="right" />
+        <el-form-item label="动作排序" prop="rank">
+          <el-input-number v-model="ruleForm.rank" :min="1" controls-position="right" />
         </el-form-item>
 
         <div class="form-upload-item-div">
           <div>
             <div>动作封面</div>
             <div>
-              <my-upload-vue file-type="img" />
+              <my-upload-vue :init-file="ruleForm.coverUrl" file-type="img" @change-file="changeCoverUrl" />
             </div>
           </div>
           <div>
             <div>动作视频</div>
             <div>
-              <my-upload-vue file-type="video" />
+              <my-upload-vue :init-file="ruleForm.videoUrl" file-type="video" @change-file="changeVideoUrl" />
             </div>
           </div>
         </div>
         <div class="form-addbox-item-div">
-          <div class="ctitle">动作封面</div>
-          <div v-for="(domain, index) in ruleForm.domains" :key="`${domain.key}`" class="addbox-items">
+          <div class="ctitle">动作描述</div>
+          <div v-for="(domain, index) in ruleForm.actionContents" :key="`${domain.key}`" class="addbox-items">
             <el-form-item
               :label="`${index + 1}、标题`"
-              :prop="'domains.' + index + '.title'"
+              :prop="'actionContents.' + index + '.title'"
               :rules="{
                 required: true,
                 message: '请输入标题',
@@ -65,16 +61,16 @@
             </el-form-item>
             <el-form-item
               :label="`内容`"
-              :prop="'domains.' + index + '.content'"
+              :prop="'actionContents.' + index + '.describe'"
               :rules="{
                 required: true,
                 message: '请输入内容',
                 trigger: 'blur',
               }"
             >
-              <el-input v-model="domain.content" type="textarea" autocomplete="off" rows="4" />
+              <el-input v-model="domain.describe" type="textarea" autocomplete="off" rows="4" />
             </el-form-item>
-            <div class="icon-remove-box">
+            <div class="icon-remove-box" @click="removeItemsForm">
               <el-icon><remove-filled /></el-icon>
             </div>
           </div>
@@ -85,9 +81,9 @@
 
         <div class="form-upload-item-div">
           <div>
-            <div>训练部位</div>
+            <div>锻炼部位</div>
             <div>
-              <my-upload-vue file-type="img" />
+              <my-upload-vue :init-file="ruleForm.partUrl" file-type="img" @change-file="changePathUrl" />
             </div>
           </div>
         </div>
@@ -104,55 +100,102 @@
 import { onMounted, ref, reactive } from 'vue'
 import MyUploadVue from '@/components/base/myUpload.vue'
 import { ArrowRightBold, RemoveFilled } from '@element-plus/icons-vue'
-import { demoApi } from '@/api/app'
+import { getInstrumentsList, getMusclesTypeList, postActionsCreate, postActionsEdit, getActionsByid } from '@/api/app'
 import { ElMessage } from 'element-plus'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+const route = useRoute()
 const router = useRouter()
 const ruleFormRef = ref<any>()
 
-// const validatePass = (rule: any, value: any, callback: any) => {
-//   if (value === '') {
-//     callback(new Error('Please input the password'))
-//   } else {
-//     if (ruleForm.checkPass !== '') {
-//       if (!ruleFormRef.value) return
-//       ruleFormRef.value.validateField('checkPass', () => null)
-//     }
-//     callback()
-//   }
-// }
+const actionId = ref()
+const pageLoading = ref(false)
+const instruments = ref<any>([])
+const musclesType = ref<any>([])
+
 const loading = ref(false)
 const ruleForm = reactive({
-  name: '',
-  order: 0,
-  domains: [
+  title: '',
+  instrumentId: '',
+  muscleId: '',
+  rank: 1,
+  coverUrl: '',
+  videoUrl: '',
+  actionContents: [
     {
       key: 0,
       title: '',
-      content: '',
+      describe: '',
     },
   ],
+  partUrl: '',
 })
 
 const rules = reactive({
-  // name: [{ validator: validatePass, trigger: 'blur' }],
-  name: [{ required: true, message: '请输入知识分类', trigger: 'blur' }],
+  title: [{ required: true, message: '请输入分类名称', trigger: 'blur' }],
+  instrumentId: [{ required: true, message: '请选择所属器械', trigger: 'blur' }],
+  muscleId: [{ required: true, message: '请选择所属部位', trigger: 'blur' }],
 })
+
+const changeCoverUrl = (val: string) => {
+  ruleForm.coverUrl = val
+}
+const changeVideoUrl = (val: string) => {
+  ruleForm.videoUrl = val
+}
+const changePathUrl = (val: string) => {
+  ruleForm.partUrl = val
+}
 
 const submitForm = (formEl: any) => {
   if (!formEl) return
   formEl.validate((valid: boolean) => {
     if (valid) {
+      if (!ruleForm.coverUrl) {
+        ElMessage.error('请上传封面')
+        return
+      }
+      if (!ruleForm.videoUrl) {
+        ElMessage.error('请上传视频')
+        return
+      }
+      if (!ruleForm.partUrl) {
+        ElMessage.error('请上传锻炼部位')
+        return
+      }
+      if (ruleForm.actionContents.length < 1) {
+        ElMessage.error('请填写动作描述')
+        return
+      }
       loading.value = true
-      demoApi({})
-        .then(() => {
-          console.log('sss')
-          ElMessage.success('添加成功')
-          router.go(-1)
-        })
-        .finally(() => {
-          loading.value = false
-        })
+      const params = {
+        title: ruleForm.title,
+        rank: Number(ruleForm.rank),
+        coverUrl: ruleForm.coverUrl,
+        videoUrl: ruleForm.videoUrl,
+        partUrl: ruleForm.partUrl,
+        muscleId: Number(ruleForm.muscleId),
+        instrumentId: Number(ruleForm.instrumentId),
+        actionContents: ruleForm.actionContents,
+      }
+      if (actionId.value) {
+        postActionsEdit({ ...params, actionId: Number(actionId.value) })
+          .then(() => {
+            ElMessage.success('修改成功')
+            router.go(-1)
+          })
+          .finally(() => {
+            loading.value = false
+          })
+      } else {
+        postActionsCreate(params)
+          .then(() => {
+            ElMessage.success('添加成功')
+            router.go(-1)
+          })
+          .finally(() => {
+            loading.value = false
+          })
+      }
     } else {
       console.log('error submit!')
       return false
@@ -161,21 +204,57 @@ const submitForm = (formEl: any) => {
 }
 
 const addItemsForm = () => {
-  ruleForm.domains.push({
+  ruleForm.actionContents.push({
     key: Date.now(),
     title: '',
-    content: '',
+    describe: '',
   })
 }
 const removeItemsForm = (item: any) => {
-  const index = ruleForm.domains.indexOf(item)
+  const index = ruleForm.actionContents.indexOf(item)
   if (index !== -1) {
-    ruleForm.domains.splice(index, 1)
+    ruleForm.actionContents.splice(index, 1)
   }
 }
 
 onMounted(() => {
-  console.log('mount')
+  getInstrumentsList({ limit: '99', page: '1' })
+    .then((res) => {
+      instruments.value = res.data.data
+    })
+    .finally(() => {
+      loading.value = false
+    })
+  getMusclesTypeList({ limit: '99', page: '1' })
+    .then((res) => {
+      musclesType.value = res.data.data
+    })
+    .finally(() => {
+      loading.value = false
+    })
+
+  if (route.query.id) {
+    actionId.value = Number(route.query.id)
+    getActionsByid({ actionId: route.query.id as string }).then((res) => {
+      ruleForm.title = res.data.title
+      ruleForm.instrumentId = res.data.instrumentId
+      ruleForm.muscleId = res.data.muscleId
+      ruleForm.rank = res.data.rank
+      ruleForm.coverUrl = res.data.coverUrl
+      ruleForm.videoUrl = res.data.video.url
+      ruleForm.actionContents = (res.data.actionContent || []).map((item: any, k: number) => {
+        return {
+          ...item,
+          key: k,
+        }
+      })
+      ruleForm.partUrl = res.data.partUrl
+
+      pageLoading.value = true
+    })
+  } else {
+    pageLoading.value = true
+  }
 })
 </script>
 

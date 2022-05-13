@@ -5,7 +5,7 @@
         <div>课程分类</div>
         <span>
           <el-icon><arrow-right-bold /></el-icon>
-          {{ true ? '创建' : '编辑' }}分类
+          {{ !courseTypeId ? '创建' : '编辑' }}分类
         </span>
       </div>
       <div>
@@ -14,11 +14,11 @@
     </div>
     <el-card class="form-box">
       <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules" label-width="80px" class="demo-ruleForm">
-        <el-form-item label="分类标题" prop="name">
-          <el-input v-model="ruleForm.name" type="text" autocomplete="off" />
+        <el-form-item label="分类标题" prop="title">
+          <el-input v-model="ruleForm.title" type="text" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="分类排序" prop="order">
-          <el-input-number v-model="ruleForm.order" :min="0" controls-position="right" />
+        <el-form-item label="分类排序" prop="rank">
+          <el-input-number v-model="ruleForm.rank" :min="1" controls-position="right" />
         </el-form-item>
 
         <el-form-item style="text-align: right">
@@ -31,34 +31,23 @@
 
 <script lang="ts" setup>
 import { onMounted, ref, reactive } from 'vue'
-import MyUploadVue from '@/components/base/myUpload.vue'
 import { ArrowRightBold } from '@element-plus/icons-vue'
-import { demoApi } from '@/api/app'
+import { postCourseTypeCreate, postCourseTypeEdit, getCourseTypeByid } from '@/api/app'
 import { ElMessage } from 'element-plus'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+const route = useRoute()
 const router = useRouter()
 const ruleFormRef = ref<any>()
+const courseTypeId = ref()
 
-// const validatePass = (rule: any, value: any, callback: any) => {
-//   if (value === '') {
-//     callback(new Error('Please input the password'))
-//   } else {
-//     if (ruleForm.checkPass !== '') {
-//       if (!ruleFormRef.value) return
-//       ruleFormRef.value.validateField('checkPass', () => null)
-//     }
-//     callback()
-//   }
-// }
 const loading = ref(false)
 const ruleForm = reactive({
-  name: '',
-  order: 0,
+  title: '',
+  rank: 1,
 })
 
 const rules = reactive({
-  // name: [{ validator: validatePass, trigger: 'blur' }],
-  name: [{ required: true, message: '请输入知识分类', trigger: 'blur' }],
+  title: [{ required: true, message: '请输入分类标题', trigger: 'blur' }],
 })
 
 const submitForm = (formEl: any) => {
@@ -66,15 +55,29 @@ const submitForm = (formEl: any) => {
   formEl.validate((valid: boolean) => {
     if (valid) {
       loading.value = true
-      demoApi({})
-        .then(() => {
-          console.log('sss')
-          ElMessage.success('添加成功')
-          router.go(-1)
-        })
-        .finally(() => {
-          loading.value = false
-        })
+      const params = {
+        title: ruleForm.title,
+        rank: Number(ruleForm.rank),
+      }
+      if (courseTypeId.value) {
+        postCourseTypeEdit({ ...params, courseTypeId: Number(courseTypeId.value) })
+          .then(() => {
+            ElMessage.success('修改成功')
+            router.go(-1)
+          })
+          .finally(() => {
+            loading.value = false
+          })
+      } else {
+        postCourseTypeCreate(params)
+          .then(() => {
+            ElMessage.success('添加成功')
+            router.go(-1)
+          })
+          .finally(() => {
+            loading.value = false
+          })
+      }
     } else {
       console.log('error submit!')
       return false
@@ -83,7 +86,13 @@ const submitForm = (formEl: any) => {
 }
 
 onMounted(() => {
-  console.log('mount')
+  if (route.query.id) {
+    courseTypeId.value = Number(route.query.id)
+    getCourseTypeByid({ courseTypeId: route.query.id as string }).then((res) => {
+      ruleForm.title = res.data.title
+      ruleForm.rank = res.data.rank
+    })
+  }
 })
 </script>
 

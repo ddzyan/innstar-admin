@@ -2,10 +2,10 @@
   <div class="box">
     <div class="title">
       <div class="t">
-        <p>器械列表</p>
+        <p>动作分类</p>
       </div>
       <div>
-        <el-button class="plain-btn" @click="$router.push('/train/actiontype/edit')">添加器械</el-button>
+        <el-button class="plain-btn" @click="$router.push('/train/actiontype/edit')">创建分类</el-button>
       </div>
     </div>
     <div class="my-tables">
@@ -18,39 +18,40 @@
         header-row-class-name="my-table-header"
         row-class-name="my-table-tr"
       >
-        <el-table-column prop="id" label="ID" />
-        <el-table-column prop="id" label="ID" />
-        <el-table-column prop="id" label="ID" />
-        <el-table-column prop="id" label="ID" />
-        <el-table-column label="xxx">
-          <template #default="scope">xxx{{ scope.row.id }}</template>
-        </el-table-column>
-        <el-table-column label="xxx">
-          <template #default>
-            <el-image
-              style="width: 100px; height: 100px"
-              :src="'https://source.unsplash.com/200x200'"
-              :preview-src-list="['https://source.unsplash.com/200x200']"
-              fit="contain"
-            />
+        <el-table-column prop="muscleId" label="ID" />
+        <el-table-column prop="title" label="分类名称" />
+
+        <el-table-column label="视频地址">
+          <template #default="scope">
+            <a :href="scope.row.video.url" target="_blank">查看视频</a>
           </template>
+        </el-table-column>
+        <el-table-column label="动作图标">
+          <template #default="scope">
+            <el-image style="width: 100px; height: 100px" :src="scope.row.coverUrl" :preview-src-list="[scope.row.coverUrl]" fit="contain" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="rank" label="排序" />
+
+        <el-table-column label="创建时间" :min-width="'120'">
+          <template #default="scope">{{ timestampToTime(scope.row.createdAt) }}</template>
         </el-table-column>
 
         <el-table-column label="操作">
-          <template #default>
+          <template #default="scope">
             <el-dropdown trigger="click">
               <div style="cursor: pointer">
                 <el-icon><more-filled /></el-icon>
               </div>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item>
+                  <el-dropdown-item @click="$router.push(`/train/actiontype/edit?id=${scope.row.muscleId}`)">
                     <div class="flex-ac">
                       <el-icon><edit /></el-icon>
                       编辑
                     </div>
                   </el-dropdown-item>
-                  <el-dropdown-item>
+                  <el-dropdown-item @click="delRow(scope.row.muscleId)">
                     <div class="flex-ac" style="color: #f24242">
                       <el-icon><delete /></el-icon>
                       删除
@@ -71,12 +72,10 @@
 import { onMounted, ref, reactive } from 'vue'
 import MyPagination from '@/components/base/Pagination.vue'
 import { MoreFilled, Edit, Delete, Search } from '@element-plus/icons-vue'
+import { timestampToTime } from '@/utils/index'
+import { ElMessageBox, ElMessage } from 'element-plus'
 
-import { demoApi } from '@/api/app'
-
-const ruleForm = ref({
-  name: '',
-})
+import { getMusclesTypeList, postMusclesTypeDel } from '@/api/app'
 
 const tableData = ref<any>([])
 const loading = ref<any>(false)
@@ -89,17 +88,10 @@ const pager = reactive<any>({
 const getBList = () => {
   const { currentPage, pageSize } = pager
   loading.value = true
-  demoApi({ limit: pageSize, page: currentPage })
+  getMusclesTypeList({ limit: pageSize, page: currentPage })
     .then((res) => {
-      tableData.value = [
-        { id: (currentPage - 1) * pageSize },
-        { id: (currentPage - 1) * pageSize + 1 },
-        { id: (currentPage - 1) * pageSize + 2 },
-        { id: (currentPage - 1) * pageSize + 3 },
-      ]
-      pager.total = 100
-      // pager.total = res.data.count
-      // tableData.value = res.data.rows
+      pager.total = res.data.count
+      tableData.value = res.data.data
     })
     .finally(() => {
       loading.value = false
@@ -115,6 +107,34 @@ function callFather(parm: any) {
 onMounted(() => {
   getBList()
 })
+
+const delRow = (id: number) => {
+  ElMessageBox.confirm(`确认要删除id为${id}的数据吗？`, 'Warning', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+    beforeClose: (action, instance, done) => {
+      if (action === 'confirm') {
+        instance.confirmButtonLoading = true
+        postMusclesTypeDel({ muscleId: id })
+          .then(() => {
+            done()
+          })
+          .finally(() => {
+            instance.confirmButtonLoading = false
+          })
+      } else {
+        done()
+      }
+    },
+  }).then(() => {
+    getBList()
+    ElMessage({
+      type: 'success',
+      message: '删除成功',
+    })
+  })
+}
 </script>
 
 <style lang="scss" scoped>

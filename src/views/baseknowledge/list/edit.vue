@@ -17,7 +17,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="分类排序" prop="rank">
-          <el-input-number v-model="ruleForm.rank" :min="0" controls-position="right" />
+          <el-input-number v-model="ruleForm.rank" :min="1" controls-position="right" />
         </el-form-item>
 
         <div class="form-upload-item-div">
@@ -71,7 +71,7 @@ const knowledgeType = ref<any>([])
 const ruleForm = reactive({
   title: '',
   knowledgeTypeId: '',
-  rank: 0,
+  rank: 1,
   describe: '',
   readers: '',
   coverUrl: '',
@@ -167,7 +167,7 @@ onMounted(() => {
       //  TODO 这些没回显
       ruleForm.describe = res.data.describe
       ruleForm.readers = res.data.readers
-      ruleForm.coverUrl = res.data.coverUrl || 'https://element-plus.org/images/renren.png'
+      ruleForm.coverUrl = res.data.coverUrl
       ruleForm.videoUrl = res.data.videoUrl
       ruleForm.courses = res.data.courses
 
