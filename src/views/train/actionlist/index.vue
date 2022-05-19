@@ -161,7 +161,7 @@ onMounted(() => {
     })
   getMusclesTypeList({ limit: '99', page: '1' })
     .then((res) => {
-      musclesType.value = res.data.data
+      musclesType.value = res.data.res.data
     })
     .finally(() => {
       loading.value = false

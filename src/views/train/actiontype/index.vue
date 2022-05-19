@@ -90,8 +90,8 @@ const getBList = () => {
   loading.value = true
   getMusclesTypeList({ limit: pageSize, page: currentPage })
     .then((res) => {
-      pager.total = res.data.count
-      tableData.value = res.data.data
+      pager.total = res.data.res.count
+      tableData.value = res.data.res.data
     })
     .finally(() => {
       loading.value = false

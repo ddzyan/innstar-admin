@@ -107,6 +107,7 @@ interface Knowledge {
   readers: number // 初始阅读人数
   coverUrl: string // 封面地址
   videoUrl: string // 视频地址
+  duration: string // 视频时长s
   courses: any[] // 链接课程 {courseId: number; rank: number}
 }
 export const postKnowledgeCreate = (params: Knowledge) =>
@@ -157,6 +158,7 @@ interface Instruments {
   readers: number // 初始阅读人数
   coverUrl: string // 封面地址
   videoUrl: string // 视频地址
+  duration: string
   courses: any[] // 链接课程 {courseId: number; rank: number}
 }
 export const postInstrumentsCreate = (params: Instruments) =>
@@ -201,7 +203,7 @@ export const getMusclesTypeByid = (params: { muscleId: string }) =>
   })
 
 // 创建动作类型
-export const postMusclesTypeCreate = (params: { title: string; rank: number; coverUrl: string; videoUrl: string }) =>
+export const postMusclesTypeCreate = (params: { title: string; rank: number; coverUrl: string; videoUrl: string; duration: string }) =>
   axios({
     method: 'post',
     url: `/admin/muscles/create`,
@@ -209,7 +211,7 @@ export const postMusclesTypeCreate = (params: { title: string; rank: number; cov
   })
 
 // 修改动作类型
-export const postMusclesTypeEdit = (params: { title: string; rank: number; coverUrl: string; videoUrl: string; muscleId: number }) =>
+export const postMusclesTypeEdit = (params: { title: string; rank: number; coverUrl: string; videoUrl: string; duration: string; muscleId: number }) =>
   axios({
     method: 'post',
     url: `/admin/muscles/update`,
@@ -255,6 +257,7 @@ interface Actions {
   title: string
   coverUrl: string
   videoUrl: string
+  duration: string
   rank: number
   partUrl: string
   muscleId: number
@@ -359,6 +362,7 @@ interface Courses {
   title: string
   coverUrl: string
   videoUrl: string
+  duration: string
   frequency: string
   describe: string
   level: string

@@ -19,7 +19,7 @@
         <el-dropdown>
           <span class="el-dropdown-link">
             <el-avatar :size="25" :src="userInfo?.avatar" style="margin-right: 5px"></el-avatar>
-            {{ userInfo?.name || 'admin' }}
+            {{ userInfo?.account || 'admin' }}
             <remix-icon :size="18" :icon="'arrow-down-s-line'"></remix-icon>
           </span>
           <template #dropdown>

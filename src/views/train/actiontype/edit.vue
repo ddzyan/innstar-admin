@@ -31,7 +31,13 @@
           <div>
             <div>上传视频</div>
             <div>
-              <my-upload-vue :init-file="ruleForm.videoUrl" file-type="video" @change-file="changeVideoUrl" />
+              <my-upload-vue
+                :init-file="ruleForm.videoUrl"
+                :init-duration="ruleForm.duration"
+                file-type="video"
+                @change-file="changeVideoUrl"
+                @change-duration="changeDuration"
+              />
             </div>
           </div>
         </div>
@@ -74,6 +80,7 @@ const ruleForm = reactive({
   rank: 1,
   coverUrl: '',
   videoUrl: '',
+  duration: '',
 })
 
 const rules = reactive({
@@ -86,6 +93,9 @@ const changeCoverUrl = (val: string) => {
 }
 const changeVideoUrl = (val: string) => {
   ruleForm.videoUrl = val
+}
+const changeDuration = (val: string) => {
+  ruleForm.duration = val
 }
 
 const submitForm = (formEl: any) => {
@@ -100,6 +110,10 @@ const submitForm = (formEl: any) => {
         ElMessage.error('请上传视频')
         return
       }
+      if (!ruleForm.duration) {
+        ElMessage.error('请输入视频时长')
+        return
+      }
       loading.value = true
 
       const params = {
@@ -107,6 +121,7 @@ const submitForm = (formEl: any) => {
         rank: Number(ruleForm.rank),
         coverUrl: ruleForm.coverUrl,
         videoUrl: ruleForm.videoUrl,
+        duration: ruleForm.duration,
       }
       if (muscleId.value) {
         postMusclesTypeEdit({ ...params, muscleId: Number(muscleId.value) })
@@ -142,6 +157,7 @@ onMounted(() => {
       ruleForm.rank = res.data.rank
       ruleForm.coverUrl = res.data.coverUrl
       ruleForm.videoUrl = res.data.video.url
+      ruleForm.duration = res.data.video.duration
 
       pageLoading.value = true
     })

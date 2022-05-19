@@ -33,9 +33,13 @@
         <el-table-column prop="id" label="ID" />
         <el-table-column prop="id" label="手机号" />
         <el-table-column prop="id" label="昵称" />
-        <el-table-column prop="id" label="ID" />
-        <el-table-column label="xxx">
-          <template #default="scope">xxx{{ scope.row.id }}</template>
+        <el-table-column label="头像">
+          <template #default="scope">
+            <el-image style="width: 30px; height: 30px" :src="scope.row.coverUrl" :preview-src-list="[scope.row.coverUrl]" fit="contain" />
+          </template>
+        </el-table-column>
+        <el-table-column label="注册时间">
+          <template #default="scope">{{ timestampToTime(scope.row.createdAt) }}</template>
         </el-table-column>
 
         <el-table-column label="操作">
@@ -46,12 +50,12 @@
               </div>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item>
+                  <!-- <el-dropdown-item>
                     <div class="flex-ac">
                       <el-icon><edit /></el-icon>
                       编辑
                     </div>
-                  </el-dropdown-item>
+                  </el-dropdown-item> -->
                   <el-dropdown-item>
                     <div class="flex-ac" style="color: #f24242">
                       <el-icon><delete /></el-icon>
@@ -73,6 +77,7 @@
 import { onMounted, ref, reactive } from 'vue'
 import MyPagination from '@/components/base/Pagination.vue'
 import { MoreFilled, Edit, Delete, Search } from '@element-plus/icons-vue'
+import { timestampToTime } from '@/utils/index'
 
 import { demoApi } from '@/api/app'
 

@@ -41,7 +41,13 @@
           <div>
             <div>动作视频</div>
             <div>
-              <my-upload-vue :init-file="ruleForm.videoUrl" file-type="video" @change-file="changeVideoUrl" />
+              <my-upload-vue
+                :init-file="ruleForm.videoUrl"
+                :init-duration="ruleForm.duration"
+                file-type="video"
+                @change-file="changeVideoUrl"
+                @change-duration="changeDuration"
+              />
             </div>
           </div>
         </div>
@@ -128,6 +134,7 @@ const ruleForm = reactive({
     },
   ],
   partUrl: '',
+  duration: '',
 })
 
 const rules = reactive({
@@ -144,6 +151,9 @@ const changeVideoUrl = (val: string) => {
 }
 const changePathUrl = (val: string) => {
   ruleForm.partUrl = val
+}
+const changeDuration = (val: string) => {
+  ruleForm.duration = val
 }
 
 const submitForm = (formEl: any) => {
@@ -162,6 +172,10 @@ const submitForm = (formEl: any) => {
         ElMessage.error('请上传锻炼部位')
         return
       }
+      if (!ruleForm.duration) {
+        ElMessage.error('请输入视频时长')
+        return
+      }
       if (ruleForm.actionContents.length < 1) {
         ElMessage.error('请填写动作描述')
         return
@@ -176,6 +190,7 @@ const submitForm = (formEl: any) => {
         muscleId: Number(ruleForm.muscleId),
         instrumentId: Number(ruleForm.instrumentId),
         actionContents: ruleForm.actionContents,
+        duration: ruleForm.duration,
       }
       if (actionId.value) {
         postActionsEdit({ ...params, actionId: Number(actionId.value) })
@@ -227,7 +242,7 @@ onMounted(() => {
     })
   getMusclesTypeList({ limit: '99', page: '1' })
     .then((res) => {
-      musclesType.value = res.data.data
+      musclesType.value = res.data.res.data
     })
     .finally(() => {
       loading.value = false
@@ -242,6 +257,7 @@ onMounted(() => {
       ruleForm.rank = res.data.rank
       ruleForm.coverUrl = res.data.coverUrl
       ruleForm.videoUrl = res.data.video.url
+      ruleForm.duration = res.data.video.duration
       ruleForm.actionContents = (res.data.actionContent || []).map((item: any, k: number) => {
         return {
           ...item,

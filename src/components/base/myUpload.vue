@@ -33,6 +33,11 @@
       </div>
     </div>
   </div>
+  <div v-if="props.fileType == 'video'" class="video-duration">
+    <el-input v-model="duration" placeholder="请输入视频时长（秒数）" @input="changeDuration">
+      <template #append>S</template>
+    </el-input>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -45,8 +50,9 @@ import { getOssCredentials } from '@/api/app/index'
 const props = defineProps<{
   fileType: 'img' | 'video'
   initFile?: string
+  initDuration?: any
 }>()
-const emits = defineEmits(['change-file'])
+const emits = defineEmits(['change-file', 'change-duration'])
 
 const uploadLoading = ref(false)
 const fileUrl = ref(props.initFile || '')
@@ -146,6 +152,11 @@ onMounted(() => {
     // stsToken  expiration
   })
 })
+
+const duration = ref(props.initDuration || '')
+const changeDuration = (val: string) => {
+  emits('change-duration', val)
+}
 </script>
 
 <style lang="scss" scoped>
@@ -232,5 +243,9 @@ onMounted(() => {
       }
     }
   }
+}
+.video-duration {
+  width: 180px;
+  margin-top: 10px;
 }
 </style>

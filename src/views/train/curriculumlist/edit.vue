@@ -58,7 +58,13 @@
           <div>
             <div>课程视频</div>
             <div>
-              <my-upload-vue :init-file="ruleForm.videoUrl" file-type="video" @change-file="changeVideoUrl" />
+              <my-upload-vue
+                :init-file="ruleForm.videoUrl"
+                :init-duration="ruleForm.duration"
+                file-type="video"
+                @change-file="changeVideoUrl"
+                @change-duration="changeDuration"
+              />
             </div>
           </div>
         </div>
@@ -106,6 +112,7 @@ const ruleForm = reactive({
   courses: [],
   rank: 1,
   initCourses: [],
+  duration: '',
 })
 
 const rules = reactive({
@@ -130,6 +137,9 @@ const changeVideoNodes = (val: any) => {
 const changeCourses = (val: any) => {
   ruleForm.courses = val
 }
+const changeDuration = (val: string) => {
+  ruleForm.duration = val
+}
 
 const submitForm = (formEl: any) => {
   if (!formEl) return
@@ -141,6 +151,10 @@ const submitForm = (formEl: any) => {
       }
       if (!ruleForm.videoUrl) {
         ElMessage.error('请上传视频')
+        return
+      }
+      if (!ruleForm.duration) {
+        ElMessage.error('请输入视频时长')
         return
       }
       if (ruleForm.courses.length < 1) {
@@ -166,6 +180,7 @@ const submitForm = (formEl: any) => {
         instrumentId: Number(ruleForm.instrumentId),
         videoNodes: ruleForm.videoNodes,
         courses: ruleForm.courses,
+        duration: ruleForm.duration,
       }
       if (courseId.value) {
         postCoursesEdit({ ...params, courseId: Number(courseId.value) })
@@ -215,6 +230,7 @@ onMounted(() => {
       ruleForm.title = res.data.course.title
       ruleForm.coverUrl = res.data.course.coverUrl
       ruleForm.videoUrl = res.data.course.video.url
+      ruleForm.duration = res.data.course.video.duration
       ruleForm.frequency = res.data.course.frequency
       ruleForm.describe = res.data.course.describe
       ruleForm.level = res.data.course.level

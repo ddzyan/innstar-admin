@@ -30,7 +30,13 @@
           <div>
             <div>上传视频</div>
             <div>
-              <my-upload-vue :init-file="ruleForm.videoUrl" file-type="video" @change-file="changeVideoUrl" />
+              <my-upload-vue
+                :init-file="ruleForm.videoUrl"
+                :init-duration="ruleForm.duration"
+                file-type="video"
+                @change-file="changeVideoUrl"
+                @change-duration="changeDuration"
+              />
             </div>
           </div>
         </div>
@@ -78,6 +84,7 @@ const ruleForm = reactive({
   videoUrl: '',
   courses: [],
   initCourses: [],
+  duration: '',
 })
 
 const rules = reactive({
@@ -96,7 +103,9 @@ const changeVideoUrl = (val: string) => {
 const changeCourses = (val: any) => {
   ruleForm.courses = val
 }
-
+const changeDuration = (val: string) => {
+  ruleForm.duration = val
+}
 const submitForm = (formEl: any) => {
   if (!formEl) return
   formEl.validate((valid: boolean) => {
@@ -107,6 +116,10 @@ const submitForm = (formEl: any) => {
       }
       if (!ruleForm.videoUrl) {
         ElMessage.error('请上传视频')
+        return
+      }
+      if (!ruleForm.duration) {
+        ElMessage.error('请输入视频时长')
         return
       }
       if (ruleForm.courses.length < 1) {
@@ -124,6 +137,7 @@ const submitForm = (formEl: any) => {
         coverUrl: ruleForm.coverUrl,
         videoUrl: ruleForm.videoUrl,
         courses: ruleForm.courses,
+        duration: ruleForm.duration,
       }
       if (knowledgeId.value) {
         postKnowledgEdit({ ...params, knowledgeId: Number(knowledgeId.value) })
@@ -168,8 +182,8 @@ onMounted(() => {
       ruleForm.readers = res.data.readers
       ruleForm.coverUrl = res.data.coverUrl
 
-      //  TODO 这些没回显
       ruleForm.videoUrl = res.data.video.url
+      ruleForm.duration = res.data.video.duration
       ruleForm.courses = (res.data.courses || []).map((item: any) => {
         return {
           courseId: item.courseId,
