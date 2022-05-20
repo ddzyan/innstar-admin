@@ -11,13 +11,13 @@
     <div class="my-tables">
       <el-form class="table-top-ruleForm">
         <el-form-item label="手机号">
-          <el-input v-model="ruleForm.name" autocomplete="off" />
+          <el-input v-model="ruleForm.tel" autocomplete="off" />
         </el-form-item>
         <el-form-item label="昵称">
-          <el-input v-model="ruleForm.name" autocomplete="off" />
+          <el-input v-model="ruleForm.nickname" autocomplete="off" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :icon="Search">搜索</el-button>
+          <el-button type="primary" :icon="Search" @click="searchFn">搜索</el-button>
         </el-form-item>
       </el-form>
 
@@ -30,12 +30,15 @@
         header-row-class-name="my-table-header"
         row-class-name="my-table-tr"
       >
-        <el-table-column prop="id" label="ID" />
-        <el-table-column prop="id" label="手机号" />
-        <el-table-column prop="id" label="昵称" />
+        <!-- <el-table-column label="序号">
+          <template #default="scope">{{ (pager.currentPage - 1) * pager.pageSize + scope.$index + 1 }}</template>
+        </el-table-column> -->
+        <el-table-column prop="userId" label="ID" />
+        <el-table-column prop="tel" label="手机号" />
+        <el-table-column prop="nickname" label="昵称" />
         <el-table-column label="头像">
           <template #default="scope">
-            <el-image style="width: 30px; height: 30px" :src="scope.row.coverUrl" :preview-src-list="[scope.row.coverUrl]" fit="contain" />
+            <el-image v-if="scope.row.avatar" style="width: 30px; height: 30px" :src="scope.row.avatar" :preview-src-list="[scope.row.avatar]" fit="contain" />
           </template>
         </el-table-column>
         <el-table-column label="注册时间">
@@ -43,7 +46,7 @@
         </el-table-column>
 
         <el-table-column label="操作">
-          <template #default>
+          <template #default="scope">
             <el-dropdown trigger="click">
               <div style="cursor: pointer">
                 <el-icon><more-filled /></el-icon>
@@ -56,7 +59,7 @@
                       编辑
                     </div>
                   </el-dropdown-item> -->
-                  <el-dropdown-item>
+                  <el-dropdown-item @click="delRow(scope.row.userId)">
                     <div class="flex-ac" style="color: #f24242">
                       <el-icon><delete /></el-icon>
                       删除
@@ -79,10 +82,12 @@ import MyPagination from '@/components/base/Pagination.vue'
 import { MoreFilled, Edit, Delete, Search } from '@element-plus/icons-vue'
 import { timestampToTime } from '@/utils/index'
 
-import { demoApi } from '@/api/app'
+import { getUserList, postUserDel } from '@/api/app'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const ruleForm = ref({
-  name: '',
+  tel: '',
+  nickname: '',
 })
 
 const tableData = ref<any>([])
@@ -96,23 +101,29 @@ const pager = reactive<any>({
 const getBList = () => {
   const { currentPage, pageSize } = pager
   loading.value = true
-  demoApi({ limit: pageSize, page: currentPage })
+  const params: any = {
+    limit: pageSize,
+    page: currentPage,
+  }
+  if (ruleForm.value.tel) {
+    params.tel = ruleForm.value.tel
+  }
+  if (ruleForm.value.nickname) {
+    params.nickname = ruleForm.value.nickname
+  }
+  getUserList(params)
     .then((res) => {
-      tableData.value = [
-        { id: (currentPage - 1) * pageSize },
-        { id: (currentPage - 1) * pageSize + 1 },
-        { id: (currentPage - 1) * pageSize + 2 },
-        { id: (currentPage - 1) * pageSize + 3 },
-      ]
-      pager.total = 100
-      // pager.total = res.data.count
-      // tableData.value = res.data.rows
+      pager.total = res.data.count
+      tableData.value = res.data.data
     })
     .finally(() => {
       loading.value = false
     })
 }
-
+const searchFn = () => {
+  pager.currentPage = 1
+  getBList()
+}
 function callFather(parm: any) {
   pager.currentPage = parm?.currentPage || 1
   pager.pageSize = parm?.pageSize || 10
@@ -122,6 +133,34 @@ function callFather(parm: any) {
 onMounted(() => {
   getBList()
 })
+
+const delRow = (id: number) => {
+  ElMessageBox.confirm(`确认要删除id为${id}的数据吗？`, 'Warning', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+    beforeClose: (action, instance, done) => {
+      if (action === 'confirm') {
+        instance.confirmButtonLoading = true
+        postUserDel({ userId: id })
+          .then(() => {
+            done()
+          })
+          .finally(() => {
+            instance.confirmButtonLoading = false
+          })
+      } else {
+        done()
+      }
+    },
+  }).then(() => {
+    getBList()
+    ElMessage({
+      type: 'success',
+      message: '删除成功',
+    })
+  })
+}
 </script>
 
 <style lang="scss" scoped>

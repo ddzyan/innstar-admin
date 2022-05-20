@@ -26,13 +26,6 @@ export const postAdminLogin = (params: { account: string; pwd: string }) =>
     data: params,
   })
 
-// export const getUserList = (params: ParamsGetUserList) =>
-//   axios({
-//     method: 'get',
-//     url: `/admin/user/list`,
-//     params: params,
-//   })
-
 // 获取oss凭证
 export const getOssCredentials = () =>
   axios({
@@ -400,5 +393,20 @@ export const postCoursesDel = (params: { courseId: number }) =>
   axios({
     method: 'post',
     url: `/admin/courses/destroy`,
+    data: params,
+  })
+
+// 获取用户列表
+export const getUserList = (params: ParamsPageLimit & { tel?: string; nickname?: string }) =>
+  axios({
+    method: 'get',
+    url: `/admin/user`,
+    params: params,
+  })
+// 删除用户
+export const postUserDel = (params: { userId: number }) =>
+  axios({
+    method: 'post',
+    url: `/admin/user/destroy`,
     data: params,
   })
