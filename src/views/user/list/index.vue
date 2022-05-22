@@ -79,7 +79,7 @@
 <script lang="ts" setup>
 import { onMounted, ref, reactive } from 'vue'
 import MyPagination from '@/components/base/Pagination.vue'
-import { MoreFilled, Edit, Delete, Search } from '@element-plus/icons-vue'
+import { MoreFilled, Delete, Search } from '@element-plus/icons-vue'
 import { timestampToTime } from '@/utils/index'
 
 import { getUserList, postUserDel } from '@/api/app'

@@ -26,7 +26,7 @@
             <div>继续上传</div>
           </div>
           <div @click="closeUpload">
-            <el-icon class="refresh-icon"><close /></el-icon>
+            <el-icon class="refresh-icon"><icon-close /></el-icon>
             <div>取消上传</div>
           </div>
         </div>
@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
 import OSS from 'ali-oss'
-import { UploadFilled, Refresh, Upload, Close } from '@element-plus/icons-vue'
+import { UploadFilled, Refresh, Upload, Close as IconClose } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import { getOssCredentials } from '@/api/app/index'
@@ -72,14 +72,14 @@ const onBeforeUploadImage = () => {
   return true
 }
 
-const uploadFile = ({ file, onError }: any) => {
+const uploadFile = ({ file }: any) => {
   uploadLoading.value = true
   afile.value = file
   ObjName.value = `${String(new Date().getTime()) + parseInt(String(Math.random() * 100), 10)}.${file.name.split('.')[file.name.split('.').length - 1]}`
 
   client.value
     .multipartUpload(ObjName.value, file, {
-      progress: (p: any, cpt: any, res: any) => {
+      progress: (p: any, cpt: any) => {
         // console.log(p, cpt, res)
         // 为中断点赋值。
         aabortCheckpoint.value = cpt
@@ -115,7 +115,7 @@ const nextUpload = async () => {
     client.value
       .multipartUpload(ObjName.value, afile.value, {
         checkpoint: aabortCheckpoint.value,
-        progress: (p: any, cpt: any, res: any) => {
+        progress: (p: any, cpt: any) => {
           // 为了实现断点上传，您可以在上传过程中保存断点信息（checkpoint）。发生上传错误后，将已保存的checkpoint作为参数传递给multipartUpload，此时将从上次上传失败的地方继续上传。
           aabortCheckpoint.value = cpt
           // 获取上传进度。
