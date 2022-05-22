@@ -10,6 +10,7 @@
       :collapse="isCollapse"
       :collapse-transition="false"
       :unique-opened="expandOneMenu"
+      :default-openeds="['/baseknowledge', '/train']"
     >
       <menu-item v-for="(menu, key) in allRoutes" :key="key" :menu="menu" />
     </el-menu>
@@ -36,7 +37,8 @@ export default defineComponent({
       if (meta.activeMenu) {
         return meta.activeMenu
       }
-      return path
+      // TODO 简单处理 这个 和 default-openeds
+      return path.replace('/edit', '')
     })
     return {
       isCollapse,

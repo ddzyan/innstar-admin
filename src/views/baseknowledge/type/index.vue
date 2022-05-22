@@ -7,18 +7,6 @@
       </div>
     </div>
     <div class="my-tables">
-      <!-- <el-form class="table-top-ruleForm">
-        <el-form-item label="知识名称">
-          <el-input v-model="ruleForm.name" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="知识名称">
-          <el-input v-model="ruleForm.name" autocomplete="off" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :icon="Search">搜索</el-button>
-        </el-form-item>
-      </el-form> -->
-
       <el-table
         v-loading="loading"
         :data="tableData"
@@ -156,7 +144,7 @@ const delRow = (id: number) => {
     }
   }
   .my-tables {
-    margin: 50px 0;
+    margin: 40px 0;
   }
 }
 </style>

@@ -42,9 +42,9 @@
           </div>
         </div>
 
-        <el-form-item label="浏览人数" prop="readers">
+        <!-- <el-form-item label="浏览人数" prop="readers">
           <el-input v-model="ruleForm.readers" type="text" autocomplete="off" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="计划简介" prop="describe">
           <el-input v-model="ruleForm.describe" type="textarea" autocomplete="off" rows="6" placeholder="请输入简介" />
         </el-form-item>
@@ -79,7 +79,7 @@ const loading = ref(false)
 const ruleForm = reactive({
   name: '',
   rank: 0,
-  readers: '',
+  // readers: '',
   describe: '',
   coverUrl: '',
   videoUrl: '',
@@ -91,7 +91,7 @@ const ruleForm = reactive({
 const rules = reactive({
   name: [{ required: true, message: '器械名称', trigger: 'blur' }],
   describe: [{ required: true, message: '请输入简介', trigger: 'blur' }],
-  readers: [{ required: true, message: '请输入人数', trigger: 'blur' }],
+  // readers: [{ required: true, message: '请输入人数', trigger: 'blur' }],
 })
 
 const changeCoverUrl = (val: string) => {
@@ -132,7 +132,7 @@ const submitForm = (formEl: any) => {
         title: ruleForm.name,
         rank: Number(ruleForm.rank),
         describe: ruleForm.describe,
-        readers: Number(ruleForm.readers),
+        readers: 0,
         coverUrl: ruleForm.coverUrl,
         videoUrl: ruleForm.videoUrl,
         courses: ruleForm.courses,
@@ -171,7 +171,7 @@ onMounted(() => {
       ruleForm.name = res.data.instrument.title
       ruleForm.rank = res.data.instrument.rank
       ruleForm.describe = res.data.instrument.describe
-      ruleForm.readers = res.data.instrument.readers
+      // ruleForm.readers = res.data.instrument.readers
       ruleForm.coverUrl = res.data.instrument.coverUrl
       ruleForm.videoUrl = res.data.instrument.video.url
       ruleForm.duration = res.data.instrument.video.duration

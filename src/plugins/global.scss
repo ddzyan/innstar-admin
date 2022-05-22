@@ -52,6 +52,17 @@
     --el-menu-hover-bg-color: efefef !important;
     --el-menu-active-color: #000 !important;
   }
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  article {
+    margin: 0;
+    padding: 0;
+  }
 }
 
 // 进度条颜色修改为主题色

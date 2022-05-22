@@ -31,6 +31,7 @@
 
         <el-form-item>
           <el-button type="primary" :icon="Search" @click="searchFn">搜索</el-button>
+          <el-button type="info" :icon="Refresh" @click="resetFn">重置</el-button>
         </el-form-item>
       </el-form>
 
@@ -91,7 +92,7 @@
 <script lang="ts" setup>
 import { onMounted, ref, reactive } from 'vue'
 import MyPagination from '@/components/base/Pagination.vue'
-import { MoreFilled, Edit, Delete, Search } from '@element-plus/icons-vue'
+import { MoreFilled, Edit, Delete, Search, Refresh } from '@element-plus/icons-vue'
 import { timestampToTime } from '@/utils/index'
 import { ElMessageBox, ElMessage } from 'element-plus'
 
@@ -153,6 +154,15 @@ function callFather(parm: any) {
 const searchFn = () => {
   pager.currentPage = 1
   getBList()
+}
+const resetFn = () => {
+  ruleForm.value = {
+    title: '',
+    instrumentId: '',
+    courseTypeId: '',
+    createdAt: '',
+  }
+  searchFn()
 }
 
 onMounted(() => {
@@ -218,7 +228,7 @@ const delRow = (id: number) => {
     }
   }
   .my-tables {
-    margin: 50px 0;
+    margin: 40px 0;
   }
 }
 </style>

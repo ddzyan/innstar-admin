@@ -168,10 +168,10 @@ const submitForm = (formEl: any) => {
         ElMessage.error('请上传视频')
         return
       }
-      if (!ruleForm.partUrl) {
-        ElMessage.error('请上传锻炼部位')
-        return
-      }
+      // if (!ruleForm.partUrl) {
+      //   ElMessage.error('请上传锻炼部位')
+      //   return
+      // }
       if (!ruleForm.duration) {
         ElMessage.error('请输入视频时长')
         return

@@ -154,7 +154,7 @@ const delRow = (id: number) => {
     }
   }
   .my-tables {
-    margin: 50px 0;
+    margin: 40px 0;
   }
 }
 </style>
