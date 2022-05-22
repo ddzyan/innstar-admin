@@ -15,11 +15,13 @@
         </el-form-item>
         <el-form-item label="所属器械" prop="instrumentId">
           <el-select v-model="ruleForm.instrumentId" placeholder="所属器械">
+            <el-option :label="'全部'" :value="''" />
             <el-option v-for="i in instruments" :key="i.instrumentId" :label="i.title" :value="i.instrumentId" />
           </el-select>
         </el-form-item>
         <el-form-item label="所属部位" prop="muscleId">
           <el-select v-model="ruleForm.muscleId" placeholder="所属部位">
+            <el-option :label="'全部'" :value="''" />
             <el-option v-for="i in musclesType" :key="i.muscleId" :label="i.title" :value="i.muscleId" />
           </el-select>
         </el-form-item>

@@ -15,11 +15,13 @@
         </el-form-item>
         <el-form-item label="所属器械" prop="instrumentId">
           <el-select v-model="ruleForm.instrumentId" placeholder="所属器械">
+            <el-option :label="'全部'" :value="''" />
             <el-option v-for="i in instruments" :key="i.instrumentId" :label="i.title" :value="i.instrumentId" />
           </el-select>
         </el-form-item>
         <el-form-item label="所属课程" prop="courseTypeId">
           <el-select v-model="ruleForm.courseTypeId" placeholder="所属课程">
+            <el-option :label="'全部'" :value="''" />
             <el-option v-for="i in courseType" :key="i.courseTypeId" :label="i.title" :value="i.courseTypeId" />
           </el-select>
         </el-form-item>

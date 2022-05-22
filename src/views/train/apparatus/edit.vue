@@ -123,10 +123,10 @@ const submitForm = (formEl: any) => {
         ElMessage.error('请输入视频时长')
         return
       }
-      if (ruleForm.courses.length < 1) {
-        ElMessage.error('请选择链接课程')
-        return
-      }
+      // if (ruleForm.courses.length < 1) {
+      //   ElMessage.error('请选择链接课程')
+      //   return
+      // }
       loading.value = true
       const params = {
         title: ruleForm.name,

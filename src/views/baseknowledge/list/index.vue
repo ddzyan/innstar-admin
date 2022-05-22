@@ -15,6 +15,7 @@
         </el-form-item>
         <el-form-item label="知识分类">
           <el-select v-model="ruleForm.knowledgeTypeId" placeholder="请选择知识分类">
+            <el-option :label="'全部'" :value="''" />
             <el-option v-for="i in knowledgeType" :key="i.knowledgeTypeId" :label="i.name" :value="i.knowledgeTypeId" />
           </el-select>
         </el-form-item>
