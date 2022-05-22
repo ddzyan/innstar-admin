@@ -17,15 +17,15 @@
         </div>
       </template>
     </el-upload>
-    <div v-if="false" class="error">
+    <div v-if="aabortCheckpoint && !uploadLoading" class="error">
       <div class="btn-box">
         <div>上传出了点问题</div>
         <div>
-          <div>
+          <div @click="nextUpload">
             <el-icon class="refresh-icon"><upload /></el-icon>
             <div>继续上传</div>
           </div>
-          <div>
+          <div @click="closeUpload">
             <el-icon class="refresh-icon"><close /></el-icon>
             <div>取消上传</div>
           </div>
@@ -74,72 +74,79 @@ const onBeforeUploadImage = () => {
 
 const uploadFile = ({ file, onError }: any) => {
   uploadLoading.value = true
-  setTimeout(() => {
-    uploadLoading.value = false
-    if (props.fileType == 'video') {
-      fileUrl.value = 'https://storage.360buyimg.com/nutui/video/video_NutUI.mp4'
-      emits('change-file', 'https://storage.360buyimg.com/nutui/video/video_NutUI.mp4')
-    } else {
-      fileUrl.value = 'https://element-plus.org/images/renren.png'
-      emits('change-file', 'https://element-plus.org/images/renren.png')
-    }
-    return ''
-  }, 500)
+  afile.value = file
+  ObjName.value = `${String(new Date().getTime()) + parseInt(String(Math.random() * 100), 10)}.${file.name.split('.')[file.name.split('.').length - 1]}`
 
-  const ObjName = 'test.png'
+  client.value
+    .multipartUpload(ObjName.value, file, {
+      progress: (p: any, cpt: any, res: any) => {
+        // console.log(p, cpt, res)
+        // 为中断点赋值。
+        aabortCheckpoint.value = cpt
+        // console.log(cpt, 'abortCheckpoint')
+      },
+    })
+    .then((res: any) => {
+      // 去除 oss 分片上传后返回所带的查询参数，否则访问会 403
+      const ossPath = res.res.requestUrls[0].split('?')[0]
 
-  // const url = client.value.signatureUrl(ObjName)
-  // console.log(url)
-
-  // client.value
-  //   .multipartUpload(ObjName, file, {
-  //     // progress: (p, cpt, res) => {
-  //     //   console.log(p, cpt, res)
-  //     //   // 为中断点赋值。
-  //     //   aabortCheckpoint.value = cpt
-  //     //   console.log(cpt, 'abortCheckpoint')
-  //     //   // 获取上传进度。
-  //     // },
-  //   })
-  //   .then((r) => console.log(r, 'error'))
-
-  // client.value
-  //   .put(ObjName, file)
-  //   .then((e) => {
-  //     console.log(e, '----')
-  //     fileUrl.value = e.url as string
-  //     uploadLoading.value = false
-  //     // client.putACL(ObjName, 'public-read')
-  //   })
-  //   .catch((x) => {
-  //     console.log(x, '=-=-=-=')
-  //   })
-
-  // s3UploadFile({ file })
-  //   .then((res: any) => {
-  //     uploadLoading.value = false
-  //     if (res.errorCode == 21005) {
-  //       ElMessage.error('文件上传失败')
-  //       return false
-  //     } else if (res.errorCode == 21006) {
-  //       ElMessage.error('配置错误')
-  //       return false
-  //     } else {
-  //       fileUrl.value = res.data.url as string
-  //       emits('change-file', res.data.url)
-  //       return res.data.url
-  //     }
-  //   })
-  //   .catch(() => {
-  //     onError()
-  //     uploadLoading.value = false
-  //   })
+      fileUrl.value = ossPath
+      emits('change-file', ossPath)
+      aabortCheckpoint.value = null
+      uploadLoading.value = false
+      // 替换协议，统一使用 'https://'，否则 Android 无法显示图片
+      // url = ossPath.replace('http://', 'https://')
+    })
+    .catch(() => {
+      uploadLoading.value = false
+      ElMessage.error('文件上传失败')
+    })
   return ''
 }
 
 const afile = ref()
+const ObjName = ref('')
 const aabortCheckpoint = ref()
 const client = ref()
+const nextUpload = async () => {
+  // 设置重试次数为五次。
+  uploadLoading.value = true
+  try {
+    client.value
+      .multipartUpload(ObjName.value, afile.value, {
+        checkpoint: aabortCheckpoint.value,
+        progress: (p: any, cpt: any, res: any) => {
+          // 为了实现断点上传，您可以在上传过程中保存断点信息（checkpoint）。发生上传错误后，将已保存的checkpoint作为参数传递给multipartUpload，此时将从上次上传失败的地方继续上传。
+          aabortCheckpoint.value = cpt
+          // 获取上传进度。
+          // console.log(p)
+        },
+      })
+      .then((res: any) => {
+        // 去除 oss 分片上传后返回所带的查询参数，否则访问会 403
+        const ossPath = res.res.requestUrls[0].split('?')[0]
+
+        fileUrl.value = ossPath
+        emits('change-file', ossPath)
+        aabortCheckpoint.value = null
+        uploadLoading.value = false
+        // 替换协议，统一使用 'https://'，否则 Android 无法显示图片
+        // url = ossPath.replace('http://', 'https://')
+      })
+      .catch(() => {
+        uploadLoading.value = false
+        ElMessage.error('文件上传失败')
+      })
+  } catch (e) {
+    console.log(e)
+  }
+}
+const closeUpload = async () => {
+  aabortCheckpoint.value = null
+  uploadLoading.value = false
+  afile.value = null
+}
+
 onMounted(() => {
   getOssCredentials().then((res) => {
     client.value = new OSS({
@@ -193,6 +200,14 @@ const changeDuration = (val: string) => {
         }
       }
     }
+  }
+  :deep(.el-upload) {
+    width: 100%;
+    height: 100%;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 }
 .upload-box {
