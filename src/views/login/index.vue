@@ -102,10 +102,11 @@ onMounted(() => {
     height: 100%;
   }
   .bg {
-    background-image: url('https://source.unsplash.com/980x1080');
+    background-image: url('/images/login-bg.png');
     display: flex;
     align-items: center;
     justify-content: center;
+    background-size: cover;
     font-size: 38px;
     font-weight: 400;
     color: #ffffff;

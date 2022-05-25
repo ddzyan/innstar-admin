@@ -153,6 +153,8 @@ interface Instruments {
   videoUrl: string // 视频地址
   duration: string
   courses: any[] // 链接课程 {courseId: number; rank: number}
+  adUrl?: string // 广告图片
+  adLink?: string // 广告链接
 }
 export const postInstrumentsCreate = (params: Instruments) =>
   axios({

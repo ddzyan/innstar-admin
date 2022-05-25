@@ -49,6 +49,18 @@
           <el-input v-model="ruleForm.describe" type="textarea" autocomplete="off" rows="6" placeholder="请输入简介" />
         </el-form-item>
 
+        <div class="advertisement">
+          <div class="box-title">
+            <div class="ctitle">产品运营链接</div>
+            <div class="flex-items">
+              <el-switch v-model="ruleForm.isOpen" size="large" />
+            </div>
+          </div>
+          <div v-if="ruleForm.isOpen">
+            <my-upload1-vue :init-file="ruleForm.adUrl" :init-shop-url="ruleForm.adLink" @change-file="changeAdUrl" @change-shopurl="changeAdLink" />
+          </div>
+        </div>
+
         <!-- <action-table-vue /> -->
         <connect-table-vue :init-data="ruleForm.initCourses" @change-data="changeCourses" />
 
@@ -63,6 +75,7 @@
 <script lang="ts" setup>
 import { onMounted, ref, reactive } from 'vue'
 import MyUploadVue from '@/components/base/myUpload.vue'
+import MyUpload1Vue from '@/components/base/myUpload1.vue'
 import connectTableVue from '@/components/form-base/connect-table.vue'
 // import actionTableVue from '@/components/form-base/action-table.vue'
 import { ArrowRightBold } from '@element-plus/icons-vue'
@@ -86,6 +99,9 @@ const ruleForm = reactive({
   courses: [],
   initCourses: [],
   duration: '',
+  isOpen: false,
+  adUrl: '',
+  adLink: '',
 })
 
 const rules = reactive({
@@ -106,6 +122,12 @@ const changeCourses = (val: any) => {
 const changeDuration = (val: string) => {
   ruleForm.duration = val
 }
+const changeAdUrl = (val: string) => {
+  ruleForm.adUrl = val
+}
+const changeAdLink = (val: string) => {
+  ruleForm.adLink = val
+}
 
 const submitForm = (formEl: any) => {
   if (!formEl) return
@@ -123,12 +145,34 @@ const submitForm = (formEl: any) => {
         ElMessage.error('请输入视频时长')
         return
       }
+      if (ruleForm.isOpen) {
+        if (!ruleForm.adUrl) {
+          ElMessage.error('请上传运营图')
+          return
+        }
+        if (!ruleForm.adLink) {
+          ElMessage.error('请输入运营链接')
+          return
+        }
+      }
+
       // if (ruleForm.courses.length < 1) {
       //   ElMessage.error('请选择链接课程')
       //   return
       // }
       loading.value = true
-      const params = {
+      const params: {
+        title: string
+        rank: number
+        describe: string
+        readers: number
+        coverUrl: string
+        videoUrl: string
+        courses: any[]
+        duration: string
+        adUrl?: string
+        adLink?: string
+      } = {
         title: ruleForm.name,
         rank: Number(ruleForm.rank),
         describe: ruleForm.describe,
@@ -137,6 +181,10 @@ const submitForm = (formEl: any) => {
         videoUrl: ruleForm.videoUrl,
         courses: ruleForm.courses,
         duration: ruleForm.duration,
+      }
+      if (ruleForm.isOpen) {
+        params.adUrl = ruleForm.adUrl
+        params.adLink = ruleForm.adLink
       }
       if (instrumentId.value) {
         postInstrumentsEdit({ ...params, instrumentId: Number(instrumentId.value) })
@@ -191,7 +239,11 @@ onMounted(() => {
           rank: item.rank,
         }
       })
-
+      ruleForm.adUrl = res.data.instrument.adUrl
+      ruleForm.adLink = res.data.instrument.adLink
+      if (res.data.instrument.adUrl) {
+        ruleForm.isOpen = true
+      }
       pageLoading.value = true
     })
   } else {
@@ -301,6 +353,22 @@ onMounted(() => {
     }
     .connect-item-table {
       margin-bottom: 40px;
+    }
+  }
+}
+.advertisement {
+  margin-bottom: 40px;
+  .box-title {
+    display: flex;
+    align-items: center;
+    .ctitle {
+      width: auto;
+      font-size: var(--el-form-label-font-size);
+      color: var(--el-text-color-regular);
+      line-height: 40px;
+      text-align: right;
+      padding: 0 12px 0 10px;
+      box-sizing: border-box;
     }
   }
 }

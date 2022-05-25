@@ -117,8 +117,8 @@ const ruleForm = reactive({
 
 const rules = reactive({
   title: [{ required: true, message: '请输入课程名称', trigger: 'blur' }],
-  instrumentId: [{ required: true, message: '请选择所属器械', trigger: 'blur' }],
-  courseTypeId: [{ required: true, message: '请选择所属课程', trigger: 'blur' }],
+  instrumentId: [{ required: true, message: '请选择所属器械', trigger: 'change' }],
+  courseTypeId: [{ required: true, message: '请选择所属课程', trigger: 'change' }],
   level: [{ required: true, message: '请输入课程等级', trigger: 'blur' }],
   frequency: [{ required: true, message: '请输入练习频次', trigger: 'blur' }],
   readers: [{ required: true, message: '请输入浏览人数', trigger: 'blur' }],

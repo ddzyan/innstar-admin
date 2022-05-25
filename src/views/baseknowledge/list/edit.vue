@@ -89,7 +89,7 @@ const ruleForm = reactive({
 
 const rules = reactive({
   title: [{ required: true, message: '请输入知识名称', trigger: 'blur' }],
-  knowledgeTypeId: [{ required: true, message: '请选择知识分类', trigger: 'blur' }],
+  knowledgeTypeId: [{ required: true, message: '请选择知识分类', trigger: 'change' }],
   describe: [{ required: true, message: '请输入知识简介', trigger: 'blur' }],
   readers: [{ required: true, message: '请输入人数', trigger: 'blur' }],
 })

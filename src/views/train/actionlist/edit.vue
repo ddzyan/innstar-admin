@@ -139,8 +139,8 @@ const ruleForm = reactive({
 
 const rules = reactive({
   title: [{ required: true, message: '请输入分类名称', trigger: 'blur' }],
-  instrumentId: [{ required: true, message: '请选择所属器械', trigger: 'blur' }],
-  muscleId: [{ required: true, message: '请选择所属部位', trigger: 'blur' }],
+  instrumentId: [{ required: true, message: '请选择所属器械', trigger: 'change' }],
+  muscleId: [{ required: true, message: '请选择所属部位', trigger: 'change' }],
 })
 
 const changeCoverUrl = (val: string) => {
