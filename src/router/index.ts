@@ -135,6 +135,11 @@ const routes: Array<RouteRecordRaw> = [
         component: loadView('views/user/list/index'),
         meta: { title: '用户列表' },
       },
+      {
+        path: 'feedback',
+        component: loadView('views/feedback/list/index'),
+        meta: { title: '反馈列表' },
+      },
     ],
   },
   {

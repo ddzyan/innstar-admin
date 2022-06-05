@@ -412,3 +412,10 @@ export const postUserDel = (params: { userId: number }) =>
     url: `/admin/user/destroy`,
     data: params,
   })
+
+export const getFeedbackList = (params: ParamsPageLimit) =>
+  axios({
+    method: 'get',
+    url: `/admin/feedback`,
+    params: params,
+  })
