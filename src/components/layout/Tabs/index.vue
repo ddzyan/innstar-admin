@@ -60,8 +60,8 @@ export default defineComponent({
     const router = useRouter()
     const scrollbarDom: Ref<ElScrollbar | null> = ref(null)
     const defaultMenu = {
-      path: '/baseknowledge/type',
-      meta: { title: '知识分类', hideClose: true },
+      path: '/baseknowledge/list',
+      meta: { title: '知识列表', hideClose: true },
     }
     const contentFullScreen = computed(() => appStore.contentFullScreen)
     const currentDisabled = computed(() => route.path === defaultMenu.path)

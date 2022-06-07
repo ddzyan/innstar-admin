@@ -17,7 +17,7 @@ const loadView = (view: string) => () => {
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/baseknowledge/type',
+    redirect: '/baseknowledge/list',
     meta: { hideMenu: true },
   },
   // {
@@ -41,13 +41,13 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/baseknowledge',
     component: loadView('components/layout/index'),
-    redirect: '/baseknowledge/type',
+    redirect: '/baseknowledge/list',
     meta: { title: '基础知识', icon: 'book-2-fill', alwayShow: true },
     children: [
       {
         path: 'type',
         component: loadView('views/baseknowledge/type/index'),
-        meta: { title: '知识分类' },
+        meta: { title: '知识分类', hideMenu: true }, // 暂时隐藏
       },
       {
         path: 'type/edit',
