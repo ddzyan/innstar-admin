@@ -7,10 +7,10 @@
           <el-input v-model="ruleForm.title" type="text" autocomplete="off" placeholder="请输入动作名称" />
         </div>
         <div>
-          <el-input v-model="ruleForm.startAt" type="text" autocomplete="off" placeholder="请输入起始秒数" />
+          <el-input v-model="ruleForm.startAt" type="text" autocomplete="off" placeholder="请输入起始时间 00:00:00" />
         </div>
         <div>
-          <el-input v-model="ruleForm.endAt" type="text" autocomplete="off" placeholder="请输入结束秒数" />
+          <el-input v-model="ruleForm.endAt" type="text" autocomplete="off" placeholder="请输入结束时间 00:00:00" />
         </div>
       </div>
       <div>
@@ -99,7 +99,30 @@ watch(tableData.value, (val) => {
 })
 
 const addTable = () => {
-  if (isNaN(Number(ruleForm.startAt)) || isNaN(Number(ruleForm.endAt))) {
+  if (!ruleForm.startAt) {
+    ElMessage.error('请输入起始时间')
+    return
+  }
+  if (!ruleForm.endAt) {
+    ElMessage.error('请输入结束时间')
+    return
+  }
+  let _start = 0
+  let _end = 0
+  const startArr = ruleForm.startAt.split(':')
+  const endArr = ruleForm.endAt.split(':')
+  if (startArr.length != 3) {
+    ElMessage.error('起始时间格式不对')
+    return
+  }
+  if (endArr.length != 3) {
+    ElMessage.error('结束时间格式不对')
+    return
+  }
+  _start = Number(startArr[0]) * 60 * 60 + Number(startArr[1]) * 60 + Number(startArr[2])
+  _end = Number(endArr[0]) * 60 * 60 + Number(endArr[1]) * 60 + Number(endArr[2])
+
+  if (isNaN(_start) || isNaN(_end)) {
     ElMessage.error('时间格式不对')
     return
   }
@@ -109,8 +132,8 @@ const addTable = () => {
   }
   tableData.value.push({
     title: ruleForm.title,
-    startAt: ruleForm.startAt,
-    endAt: ruleForm.endAt,
+    startAt: _start,
+    endAt: _end,
   })
   ruleForm.title = ''
   ruleForm.startAt = ''

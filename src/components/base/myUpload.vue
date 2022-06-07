@@ -1,6 +1,14 @@
 <template>
   <div class="upload">
-    <el-upload v-loading="uploadLoading" class="upload-box" action="#" :before-upload="onBeforeUploadImage" :http-request="uploadFile" :show-file-list="false">
+    <el-upload
+      v-loading="uploadLoading"
+      class="upload-box"
+      action="#"
+      :before-upload="onBeforeUploadImage"
+      :http-request="uploadFile"
+      :show-file-list="false"
+      :accept="props.fileType == 'video' ? 'video/*' : 'image/*'"
+    >
       <template v-if="fileUrl == ''">
         <el-icon class="upload-icon"><upload-filled /></el-icon>
         <div class="upload-text">{{ props.fileType == 'video' ? '添加视频' : '添加图片' }}</div>

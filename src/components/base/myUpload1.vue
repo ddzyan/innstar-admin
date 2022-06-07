@@ -1,6 +1,14 @@
 <template>
   <div class="upload">
-    <el-upload v-loading="uploadLoading" class="upload-box" action="#" :before-upload="onBeforeUploadImage" :http-request="uploadFile" :show-file-list="false">
+    <el-upload
+      v-loading="uploadLoading"
+      class="upload-box"
+      action="#"
+      :before-upload="onBeforeUploadImage"
+      :http-request="uploadFile"
+      :show-file-list="false"
+      :accept="'image/*'"
+    >
       <template v-if="fileUrl == ''">
         <el-icon class="upload-icon"><upload-filled /></el-icon>
         <div class="upload-text">{{ '添加运营图' }}</div>
