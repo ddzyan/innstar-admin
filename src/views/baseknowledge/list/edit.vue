@@ -11,11 +11,11 @@
         <el-form-item label="知识名称" prop="title">
           <el-input v-model="ruleForm.title" type="text" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="知识分类" prop="knowledgeTypeId">
+        <!-- <el-form-item label="知识分类" prop="knowledgeTypeId">
           <el-select v-model="ruleForm.knowledgeTypeId" placeholder="请选择分类">
             <el-option v-for="i in knowledgeType" :key="i.knowledgeTypeId" :label="i.name" :value="i.knowledgeTypeId" />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="分类排序" prop="rank">
           <el-input-number v-model="ruleForm.rank" :min="1" controls-position="right" />
         </el-form-item>
@@ -89,7 +89,7 @@ const ruleForm = reactive({
 
 const rules = reactive({
   title: [{ required: true, message: '请输入知识名称', trigger: 'blur' }],
-  knowledgeTypeId: [{ required: true, message: '请选择知识分类', trigger: 'change' }],
+  // knowledgeTypeId: [{ required: true, message: '请选择知识分类', trigger: 'change' }],
   describe: [{ required: true, message: '请输入知识简介', trigger: 'blur' }],
   readers: [{ required: true, message: '请输入人数', trigger: 'blur' }],
 })

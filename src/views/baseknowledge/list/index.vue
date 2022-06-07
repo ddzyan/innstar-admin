@@ -13,12 +13,12 @@
         <el-form-item label="知识名称">
           <el-input v-model="ruleForm.title" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="知识分类">
+        <!-- <el-form-item label="知识分类">
           <el-select v-model="ruleForm.knowledgeTypeId" placeholder="请选择知识分类">
             <el-option :label="'全部'" :value="''" />
             <el-option v-for="i in knowledgeType" :key="i.knowledgeTypeId" :label="i.name" :value="i.knowledgeTypeId" />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="创建时间">
           <el-date-picker v-model="ruleForm.createdAt" type="daterange" range-separator="~" start-placeholder="Start" end-placeholder="End" />
         </el-form-item>
