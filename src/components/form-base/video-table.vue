@@ -67,6 +67,12 @@
                     下移
                   </div>
                 </el-dropdown-item>
+                <el-dropdown-item @click="editTableCol(scope.row, scope.$index)">
+                  <div class="flex-ac">
+                    <el-icon><edit /></el-icon>
+                    编辑
+                  </div>
+                </el-dropdown-item>
                 <el-dropdown-item @click="removeTableCol(scope.row)">
                   <div class="flex-ac" style="color: #f24242">
                     <el-icon><delete /></el-icon>
@@ -79,12 +85,36 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-dialog v-model="dialogVisible" title="修改">
+      <div v-if="dialogVisible">
+        <div style="margin-bottom: 10px">
+          <el-input v-model="curEditRow.data.title" type="text" autocomplete="off" placeholder="请输入动作名称" />
+        </div>
+        <div style="margin-bottom: 10px">
+          <el-input v-model="curEditRow.data.startAt" type="text" autocomplete="off" placeholder="请输入起始时间 00:00:00" />
+        </div>
+        <div style="margin-bottom: 10px">
+          <el-input v-model="curEditRow.data.endAt" type="text" autocomplete="off" placeholder="请输入结束时间 00:00:00" />
+        </div>
+      </div>
+      <div>
+        <div class="imgupload">
+          <my-upload-vue :init-file="curEditRow.data.coverUrl" file-type="img" @change-file="changeCoverUrl1" />
+        </div>
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="changeTableCol">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, watch, reactive, nextTick } from 'vue'
-import { MoreFilled, Delete, Bottom, Top as IconTop } from '@element-plus/icons-vue'
+import { MoreFilled, Delete, Bottom, Top as IconTop, Edit } from '@element-plus/icons-vue'
 import MyUploadVue from '@/components/base/myUpload.vue'
 import { ElMessage } from 'element-plus'
 const props = defineProps<{ initData: any }>()
@@ -202,6 +232,79 @@ const formatTime = (n: any) => {
       return ('00' + String(i)).substring(String(i).length, String(i).length + 2)
     })
     .join(':')
+}
+const dialogVisible = ref(false)
+const curEditRow = ref({
+  data: {
+    title: '',
+    startAt: '',
+    endAt: '',
+    coverUrl: '',
+  },
+  index: 0,
+})
+const changeCoverUrl1 = (val: string) => {
+  curEditRow.value.data.coverUrl = val
+}
+const editTableCol = (row: any, ind: any) => {
+  const _data: any = {}
+  _data.title = row.title
+  _data.startAt = formatTime(row.startAt)
+  _data.endAt = formatTime(row.endAt)
+  _data.coverUrl = row.coverUrl
+  curEditRow.value.data = _data
+  curEditRow.value.index = ind
+  dialogVisible.value = true
+}
+const changeTableCol = () => {
+  const _ruleForm = curEditRow.value.data
+  // 校验
+  if (!_ruleForm.startAt) {
+    ElMessage.error('请输入起始时间')
+    return
+  }
+  if (!_ruleForm.endAt) {
+    ElMessage.error('请输入结束时间')
+    return
+  }
+  let _start = 0
+  let _end = 0
+  const startArr = _ruleForm.startAt.split(':')
+  const endArr = _ruleForm.endAt.split(':')
+  if (startArr.length != 3) {
+    ElMessage.error('起始时间格式不对')
+    return
+  }
+  if (endArr.length != 3) {
+    ElMessage.error('结束时间格式不对')
+    return
+  }
+  _start = Number(startArr[0]) * 60 * 60 + Number(startArr[1]) * 60 + Number(startArr[2])
+  _end = Number(endArr[0]) * 60 * 60 + Number(endArr[1]) * 60 + Number(endArr[2])
+
+  if (isNaN(_start) || isNaN(_end)) {
+    ElMessage.error('时间格式不对')
+    return
+  }
+  if (!_ruleForm.title || !_ruleForm.startAt || !_ruleForm.endAt) {
+    ElMessage.error('请输入内容')
+    return
+  }
+  if (!_ruleForm.coverUrl) {
+    ElMessage.error('请上传封面')
+    return
+  }
+  tableData.value.splice(curEditRow.value.index, 1, { ..._ruleForm, startAt: _start, endAt: _end })
+  dialogVisible.value = false
+  curEditRow.value = {
+    data: {
+      title: '',
+      startAt: '',
+      endAt: '',
+      coverUrl: '',
+    },
+    index: 0,
+  }
 }
 </script>
 
