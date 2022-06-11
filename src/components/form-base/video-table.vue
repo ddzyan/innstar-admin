@@ -4,13 +4,20 @@
     <div class="flex-items">
       <div>
         <div>
-          <el-input v-model="ruleForm.title" type="text" autocomplete="off" placeholder="请输入动作名称" />
+          <div>
+            <el-input v-model="ruleForm.title" type="text" autocomplete="off" placeholder="请输入动作名称" />
+          </div>
+          <div>
+            <el-input v-model="ruleForm.startAt" type="text" autocomplete="off" placeholder="请输入起始时间 00:00:00" />
+          </div>
+          <div>
+            <el-input v-model="ruleForm.endAt" type="text" autocomplete="off" placeholder="请输入结束时间 00:00:00" />
+          </div>
         </div>
         <div>
-          <el-input v-model="ruleForm.startAt" type="text" autocomplete="off" placeholder="请输入起始时间 00:00:00" />
-        </div>
-        <div>
-          <el-input v-model="ruleForm.endAt" type="text" autocomplete="off" placeholder="请输入结束时间 00:00:00" />
+          <div class="imgupload">
+            <my-upload-vue v-if="resetUpload" :init-file="ruleForm.coverUrl" file-type="img" @change-file="changeCoverUrl" />
+          </div>
         </div>
       </div>
       <div>
@@ -24,6 +31,11 @@
         <template #default="scope">{{ scope.$index + 1 }}</template>
       </el-table-column>
       <el-table-column prop="title" label="动作名称" />
+      <el-table-column prop="startAt" label="动作封面图">
+        <template #default="scope">
+          <el-image style="width: 50px; height: 50px" :src="scope.row.coverUrl" :preview-src-list="[scope.row.coverUrl]" fit="contain" />
+        </template>
+      </el-table-column>
       <el-table-column prop="startAt" label="起始时间">
         <template #default="scope">{{ formatTime(scope.row.startAt) }}</template>
       </el-table-column>
@@ -71,17 +83,22 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, reactive } from 'vue'
+import { ref, watch, reactive, nextTick } from 'vue'
 import { MoreFilled, Delete, Bottom, Top as IconTop } from '@element-plus/icons-vue'
+import MyUploadVue from '@/components/base/myUpload.vue'
 import { ElMessage } from 'element-plus'
 const props = defineProps<{ initData: any }>()
-
+const resetUpload = ref(true)
 const emits = defineEmits(['changeData'])
 const ruleForm = reactive({
   title: '',
   startAt: '',
   endAt: '',
+  coverUrl: '',
 })
+const changeCoverUrl = (val: string) => {
+  ruleForm.coverUrl = val
+}
 
 const tableData = ref<any>(props.initData || [])
 
@@ -93,6 +110,7 @@ watch(tableData.value, (val) => {
         title: String(i.title),
         startAt: Number(i.startAt),
         endAt: Number(i.endAt),
+        coverUrl: String(i.coverUrl),
       }
     }),
   )
@@ -130,14 +148,24 @@ const addTable = () => {
     ElMessage.error('请输入内容')
     return
   }
+  if (!ruleForm.coverUrl) {
+    ElMessage.error('请上传封面')
+    return
+  }
   tableData.value.push({
     title: ruleForm.title,
     startAt: _start,
     endAt: _end,
+    coverUrl: ruleForm.coverUrl,
   })
   ruleForm.title = ''
   ruleForm.startAt = ''
   ruleForm.endAt = ''
+  ruleForm.coverUrl = ''
+  resetUpload.value = false
+  nextTick(() => {
+    resetUpload.value = true
+  })
 }
 
 const removeTableCol = (item: any) => {
@@ -192,27 +220,53 @@ const formatTime = (n: any) => {
   .flex-items {
     display: flex;
     justify-content: space-between;
+    height: 130px;
+    // flex-wrap: wrap;
+    .imgupload {
+      transform: scale(0.75);
+      transform-origin: left top;
+    }
     & > div:nth-of-type(1) {
-      flex-grow: 1;
-      margin-right: 20px;
       display: flex;
-      & > div {
-        width: 24%;
-        padding-right: 20px;
-        .el-input-number {
-          width: 120px;
-        }
-        &.sorder {
-          display: flex;
-          font-size: var(--el-form-label-font-size);
-          color: var(--el-text-color-regular);
-          line-height: 40px;
-          & > div {
-            min-width: 3em;
-          }
+      height: 130px;
+      & > div:nth-of-type(1) {
+        margin-right: 10px;
+        min-width: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        & > div {
+          margin-bottom: 10px;
         }
       }
+      // & > div {
+      //   margin-bottom: 10px;
+      //   .el-input {
+      //     width: 100%;
+      //   }
+      // }
     }
+    // & > div:nth-of-type(1) {
+    //   flex-grow: 1;
+    //   margin-right: 20px;
+    //   display: flex;
+    //   & > div {
+    //     width: 24%;
+    //     padding-right: 20px;
+    //     .el-input-number {
+    //       width: 120px;
+    //     }
+    //     &.sorder {
+    //       display: flex;
+    //       font-size: var(--el-form-label-font-size);
+    //       color: var(--el-text-color-regular);
+    //       line-height: 40px;
+    //       & > div {
+    //         min-width: 3em;
+    //       }
+    //     }
+    //   }
+    // }
   }
 }
 .connect-item-table {

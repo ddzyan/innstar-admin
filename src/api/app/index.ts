@@ -368,6 +368,7 @@ interface Courses {
     title: string
     startAt: number
     endAt: number
+    coverUrl: string
   }[]
   courses: {
     courseId: number

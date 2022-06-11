@@ -5,7 +5,7 @@
         <div>动作分类</div>
         <span>
           <el-icon><arrow-right-bold /></el-icon>
-          {{ !muscleId ? '创建' : '编辑' }}分类
+          {{ muscleId === null ? '创建' : '编辑' }}分类
         </span>
       </div>
       <div>
@@ -60,7 +60,7 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 const ruleFormRef = ref<any>()
-const muscleId = ref()
+const muscleId = ref<any>(null)
 const pageLoading = ref(false)
 
 // const validatePass = (rule: any, value: any, callback: any) => {
@@ -123,7 +123,7 @@ const submitForm = (formEl: any) => {
         videoUrl: ruleForm.videoUrl,
         duration: ruleForm.duration,
       }
-      if (muscleId.value) {
+      if (muscleId.value !== null) {
         postMusclesTypeEdit({ ...params, muscleId: Number(muscleId.value) })
           .then(() => {
             ElMessage.success('修改成功')
